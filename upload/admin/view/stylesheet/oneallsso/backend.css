@@ -1,0 +1,13 @@
+@CHARSET "UTF-8";
+
+.oasso-container .row+.row {
+    margin-top: 15px;
+}
+
+.oasso-container #oasso_connection_verify_result,
+.oasso-container #oasso_connection_autodetect_result{
+   font-size: 14px;
+    font-weight: bold;
+    margin-bottom: 0;
+    padding: 9px 11px;
+}
