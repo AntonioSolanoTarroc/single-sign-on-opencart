@@ -2,7 +2,7 @@
 * **Single Sign-On for OpenCart 2.3+**
 
 
-# Social Login 1.0.0 for OpenCart 2.3.x
+# Single Sign-On 1.0.0 for OpenCart 2.3.x
 
 Single Sign-On for OpenCart is a professional extension that automatically 
 signs users in as they browse between multiple and independent OpenCart 
@@ -22,7 +22,8 @@ web-delivered tools and services for establishing and optimizing a site's connec
 
 
 ## License
-The **GNU General Public License** (GPL) is available at http://www.gnu.org/licenses/old-licenses/gpl-2.0.html.
+The **GNU General Public License** (GPL) is available at 
+http://www.gnu.org/licenses/old-licenses/gpl-2.0.html.
 
 
 
