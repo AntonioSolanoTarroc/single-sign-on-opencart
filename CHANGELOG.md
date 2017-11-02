@@ -1,10 +1,12 @@
-CHANGELOG
-=========
+# Change Log
 
-Changes will be versionned according to the [Semantic Versioning](http://semver.org/).
+All notable changes to this project will be documented in this file. 
+This project adheres to [Semantic Versioning](http://semver.org/).
 
 
-1.0.0
------
+## [Unreleased]
 
-* plugin creation
+
+## [1.0.0] - 2017-11-02
+### Added
+- First version released

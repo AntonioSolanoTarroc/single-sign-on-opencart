@@ -1,37 +1,29 @@
-Oneall Single Sign On 1.0 for OpenCart 2.3.x
----------------------------------------------
-Single Sign On allows your customers to connect with one click to OpenCart by
-using their social network accounts. Over 30 different social networks such
-as Facebook, Twitter, LinkedIn, Google, Yahoo, GitHub, Windows Live supported.
-
-Single Sign On increases the conversion rate of your shop by simplifying the
-registration process. Get rid of long forms and complicated captchas by 
-allowing new users to sign-up with their existing social network account.
-
-Gather rich demographic information (age, gender, phone numbers ...) about your 
-customers without requiring them to fill out any forms. Obtain pre-validated email 
-addresses, increase your data quality and leverage this information to increase 
-your sales.
+## Available Versions
+* **Single Sign-On for OpenCart 2.3+**
 
 
-INSTALLATION
----------------------------------------------
+# Social Login 1.0.0 for OpenCart 2.3.x
 
-1. Copy the files to the root directory of your shop,
+Single Sign-On for OpenCart is a professional extension that automatically 
+signs users in as they browse between multiple and independent OpenCart 
+shops in your network. 
 
-2. Go to https://app.oneall.com/signup/ and create a free account,
+Take away the need for your users to re-enter their authentication credentials 
+when they switch from one of your shops to another. 
 
-3. Setup a new OneAll Site,
+Single Sign-On can be installed within minutes, is 100% compliant with all 
+European and U.S. data protection laws and seamlessly integrates into 
+your OpenCart shop. 
 
-4. Open your OpenCart admin and go to Extensions\Modules\Oneall Single Sign On,
 
-5. Enter your OneAll API Subdomain and Keys,
+## About Us
+Social Login has been created and is maintained by [OneAll](http://www.oneall.com/), a technology company offering a set of 
+web-delivered tools and services for establishing and optimizing a site's connection with social networks.
 
-6. Save your settings.
 
-Use the "Autodetect Communication Settings" and "Verify API Settings"
-buttons to make sure that the API connection is working properly. 
+## License
+The **GNU General Public License** (GPL) is available at http://www.gnu.org/licenses/old-licenses/gpl-2.0.html.
 
-Test every Single Sign On method that you are going to use.
-Most Social Network require some additional setup. You can find the
-corresponding setup guide in your OneAll.com account.
+
+
+**Fork us on Github!**
