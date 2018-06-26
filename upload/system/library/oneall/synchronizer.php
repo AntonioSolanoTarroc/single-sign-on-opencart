@@ -78,11 +78,11 @@ class Synchronizer
         DataExporter $exporter,
         sso_settings $settings
     ) {
-        $this->database  = $database;
-        $this->api       = $api;
+        $this->database = $database;
+        $this->api = $api;
         $this->apiFacade = $apiFacade;
-        $this->exporter  = $exporter;
-        $this->settings  = $settings;
+        $this->exporter = $exporter;
+        $this->settings = $settings;
     }
 
     /**
@@ -99,7 +99,7 @@ class Synchronizer
     {
         // first thing to do is to find the customer to update (or create)
         $userEmail = $this->apiFacade->getUserEmail($userToken);
-        $customer  = $this->identifyCustomer($userToken, $userEmail);
+        $customer = $this->identifyCustomer($userToken, $userEmail);
         if (!$customer)
         {
             // account creation is not allowed
@@ -111,10 +111,10 @@ class Synchronizer
             $customer = [];
         }
 
-        $rawResponse      = $this->api->getIdentity($identityToken);
+        $rawResponse = $this->api->getIdentity($identityToken);
         $identityResponse = new IdentityFacade (json_decode($rawResponse->getBody()));
 
-        $customer   = $this->mergeCustomerData($customer, $identityResponse);
+        $customer = $this->mergeCustomerData($customer, $identityResponse);
         $customerId = $this->database->saveCustomer($customer, $_SERVER ['REMOTE_ADDR']);
 
         $this->pullAddresses((array) $identityResponse->getAddresses(), $customerId);
@@ -131,14 +131,14 @@ class Synchronizer
      */
     public function push(Customer $customer, $password = null)
     {
-        $data      = $this->exporter->exportCustomer($customer);
+        $data = $this->exporter->exportCustomer($customer);
         $userToken = $this->database->getIdentityToken($customer->getId());
 
         // if no token in DB, we have a new customer, freshly registered.
         // we'll check if an account for its email has been created.
         if (!$userToken)
         {
-            $response     = $this->api->lookUpByCredentials($customer->getEmail());
+            $response = $this->api->lookUpByCredentials($customer->getEmail());
             $userResponse = new ResponseFacade (json_decode($response->getBody()));
 
             $userToken = $userResponse->getUserToken();
@@ -156,8 +156,8 @@ class Synchronizer
 
         // link customer to the user/identity token if the customer is already created.
         // (
-        $userToken        = $responseFacade->getUserToken();
-        $identityToken    = $responseFacade->getIdentityToken();
+        $userToken = $responseFacade->getUserToken();
+        $identityToken = $responseFacade->getIdentityToken();
         $identityProvider = $responseFacade->getProvider();
 
         $oneAllUserId = $this->database->saveOneallUser($customer->getId(), $userToken);
@@ -174,7 +174,7 @@ class Synchronizer
     protected function pullAddresses(array $profileAddresses, $customerId)
     {
         $customerAddresses = $this->database->getAddresses($customerId);
-        $addresses         = [];
+        $addresses = [];
 
         // escape case 1 : if we have more than 1 address in opencart, we do not know which one to update
         $escapeCase1 = (count($customerAddresses) > 1);
@@ -203,7 +203,7 @@ class Synchronizer
 
             $profileAddress = (array) array_pop($profileAddresses);
 
-            $address   = $this->mergeDataIntoOpencartAddress($customerAddress, $profileAddress);
+            $address = $this->mergeDataIntoOpencartAddress($customerAddress, $profileAddress);
             $addressId = $this->database->saveAddress($customerId, $address);
             $this->database->makeDefaultAddress($customerId, $addressId);
         }
@@ -242,8 +242,8 @@ class Synchronizer
     protected function mergeCustomerData(array $customer, IdentityFacade $identity)
     {
         $customer ['firstname'] = $identity->getFirstname();
-        $customer ['lastname']  = $identity->getLastname();
-        $customer ['email']     = $identity->getFirstEmail();
+        $customer ['lastname'] = $identity->getLastname();
+        $customer ['email'] = $identity->getFirstEmail();
 
         $numbers = $identity->getPhoneNumbers();
         $unknown = null;
@@ -293,25 +293,25 @@ class Synchronizer
 
         // first ensure all
         $opencartAddress = array_merge($structure, $opencartAddress);
-        if (!empty ($profileAddress ['code']))
+        if (!empty ($profileAddress['code']))
         {
-            $countryId                      = $this->database->getCountryId($profileAddress ['code']);
-            $opencartAddress ['country_id'] = $countryId;
+            $countryId = $this->database->getCountryId($profileAddress['code']);
+            $opencartAddress['country_id'] = $countryId;
 
-            if (!empty ($profileAddress ['region']) && $countryId)
+            if (!empty ($profileAddress['region']) && $countryId)
             {
-                $regionId                    = $this->database->getRegionId($profileAddress ['region'], $countryId);
-                $opencartAddress ['zone_id'] = $regionId;
+                $regionId = $this->database->getRegionId($profileAddress['region'], $countryId);
+                $opencartAddress['zone_id'] = $regionId;
             }
         }
 
-        $opencartAddress ['firstname'] = $profileAddress ['firstName'];
-        $opencartAddress ['lastname']  = $profileAddress ['lastName'];
-        $opencartAddress ['company']   = $profileAddress ['companyName'];
-        $opencartAddress ['address_1'] = $profileAddress ['streetAddress'];
-        $opencartAddress ['address_2'] = $profileAddress ['complement'];
-        $opencartAddress ['city']      = $profileAddress ['locality'];
-        $opencartAddress ['postcode']  = $profileAddress ['postalCode'];
+        $opencartAddress['firstname'] = !empty($profileAddress['firstName']) ? $profileAddress['firstName'] : '';
+        $opencartAddress['lastname'] = !empty($profileAddress['lastName']) ? $profileAddress['lastName'] : '';
+        $opencartAddress['company'] = !empty($profileAddress['companyName']) ? $profileAddress['companyName'] : '';
+        $opencartAddress['address_1'] = !empty($profileAddress['streetAddress']) ? $profileAddress['streetAddress'] : '';
+        $opencartAddress['address_2'] = !empty($profileAddress['complement']) ? $profileAddress['complement'] : '';
+        $opencartAddress['city'] = !empty($profileAddress['locality']) ? $profileAddress['locality'] : '';
+        $opencartAddress['postcode'] = !empty($profileAddress['postalCode']) ? $profileAddress['postalCode'] : '';
 
         return $opencartAddress;
     }
