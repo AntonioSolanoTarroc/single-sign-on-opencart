@@ -24,10 +24,10 @@
  */
 
 /**
- * ControllerExtensionModuleOneallsso class
+ * ControllerModuleOneallsso class
  * This class is the event listener used by the sso oneall plugin.
  */
-class ControllerExtensionModuleOneallSsoCallback extends \Oneall\AbstractOneallSsoController
+class ControllerModuleOneallSsoCallback extends \Oneall\AbstractOneallSsoController
 {
     /**
      * Try to connect a user with the given posted token

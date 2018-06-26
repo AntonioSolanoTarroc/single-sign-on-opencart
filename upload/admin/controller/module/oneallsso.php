@@ -25,9 +25,9 @@
  */
 
 /**
- * Class ControllerExtensionModuleOneallsso
+ * Class ControllerModuleOneallsso
  */
-class ControllerExtensionModuleOneallsso extends Controller
+class ControllerModuleOneallsso extends Controller
 {
     /**
      *
@@ -72,10 +72,8 @@ class ControllerExtensionModuleOneallsso extends Controller
 
         foreach ($this->getEvents() as $code => $event)
         {
-            if (!$this->getEventModel()->getEvent($code, $event ['trigger'], $event ['action']))
-            {
-                $this->getEventModel()->addEvent($code, $event ['trigger'], $event ['action']);
-            }
+
+            $this->getEventModel()->addEvent($code, $event ['trigger'], $event ['action']);
         }
     }
 
@@ -132,7 +130,7 @@ class ControllerExtensionModuleOneallsso extends Controller
 
             // Redirect
             $args = ('token=' . $this->session->data ['token'] . '&oa_action=saved');
-            $this->response->redirect($this->url->link('extension/module/oneallsso', $args, true));
+            $this->response->redirect($this->url->link('module/oneallsso', $args, true));
         }
 
         // Settings Saved
@@ -148,7 +146,7 @@ class ControllerExtensionModuleOneallsso extends Controller
         }
 
         // Display Page
-        $this->response->setOutput($this->load->view('extension/module/oneallsso.tpl', $data));
+        $this->response->setOutput($this->load->view('module/oneallsso.tpl', $data));
     }
 
     /**
@@ -202,7 +200,7 @@ class ControllerExtensionModuleOneallsso extends Controller
         $data = $this->get_default_values();
 
         // language
-        $data = array_merge($data, $this->load->language('extension/module/oneallsso'));
+        $data = array_merge($data, $this->load->language('module/oneallsso'));
 
         $token = $this->session->data ['token'];
 
@@ -220,7 +218,7 @@ class ControllerExtensionModuleOneallsso extends Controller
             ),
             array(
                 'text' => $this->language->get('heading_title'),
-                'href' => $this->url->link('extension/module/oneallsso', 'token=' . $token, true),
+                'href' => $this->url->link('module/oneallsso', 'token=' . $token, true),
                 'separator' => ' :: '
             )
         );
@@ -229,8 +227,8 @@ class ControllerExtensionModuleOneallsso extends Controller
         $this->document->setTitle($this->language->get('heading_title'));
 
         // Buttons
-        $data ['action'] = $this->url->link('extension/module/oneallsso', 'token=' . $token, true);
-        $data ['cancel'] = $this->url->link('extension/module/oneallsso', 'token=' . $token, true);
+        $data ['action'] = $this->url->link('module/oneallsso', 'token=' . $token, true);
+        $data ['cancel'] = $this->url->link('module/oneallsso', 'token=' . $token, true);
 
         // Template
         $data ['header']      = $this->load->controller('common/header');
@@ -252,7 +250,7 @@ class ControllerExtensionModuleOneallsso extends Controller
     private function validate()
     {
         // Can this user modify the settings?
-        if (!$this->user->hasPermission('modify', 'extension/module/oneallsso'))
+        if (!$this->user->hasPermission('modify', 'module/oneallsso'))
         {
             $this->error ['warning'] = $this->language->get('oa_text_error_permission');
 
@@ -303,7 +301,7 @@ class ControllerExtensionModuleOneallsso extends Controller
         // Try to establish a connection.
         //
         $client = $this->getBuilder()->build($oneall_api_handler, $oneall_subdomain, $oneall_public, $oneall_private,
-                                             $isSecure, 'api.oneall.com')
+                                             $isSecure, 'api.oneall.loc')
         ;
 
         // ensure function is working through a test
@@ -485,7 +483,7 @@ class ControllerExtensionModuleOneallsso extends Controller
             return false;
         }
 
-        $client = $this->getBuilder()->build($handler, 'www', '', '', $isSecure, 'oneall.com');
+        $client = $this->getBuilder()->build($handler, 'www', '', '', $isSecure, 'oneall.loc');
 
         // ensure function is working through a test
         $result = $client->get('/ping.html');
@@ -503,7 +501,8 @@ class ControllerExtensionModuleOneallsso extends Controller
      */
     private function getEventModel()
     {
-        if (!$this->model_extension_event instanceof ModelExtensionEvent)
+        // Callback Handler
+        if (defined('VERSION') && version_compare(VERSION, '2.2.0', '>=') && !$this->model_extension_event instanceof \ModelExtensionEvent)
         {
             $this->load->model('extension/event');
         }
@@ -521,43 +520,43 @@ class ControllerExtensionModuleOneallsso extends Controller
         $events = array(
             'oneall_before_update' => [
                 'trigger' => 'catalog/controller/account/edit/before',
-                'action' => 'extension/module/oneallssoupdate/preUpdate'
+                'action' => 'module/oneallssoupdate/preUpdate'
             ],
             'oneall_before_password' => [
                 'trigger' => 'catalog/controller/account/password/before',
-                'action' => 'extension/module/oneallssoupdate/prePasswordUpdate'
+                'action' => 'module/oneallssoupdate/prePasswordUpdate'
             ],
             'oneall_after_password' => [
                 'trigger' => 'catalog/controller/account/account/after',
-                'action' => 'extension/module/oneallssoupdate/postPasswordUpdate'
+                'action' => 'module/oneallssoupdate/postPasswordUpdate'
             ],
             'oneall_after_update' => [
                 'trigger' => 'catalog/controller/account/account/after',
-                'action' => 'extension/module/oneallssoupdate/postUpdate'
+                'action' => 'module/oneallssoupdate/postUpdate'
             ],
             'oneall_before_register' => [
                 'trigger' => 'catalog/controller/account/register/before',
-                'action' => 'extension/module/oneallssoregister/preRegister'
+                'action' => 'module/oneallssoregister/preRegister'
             ],
             'oneall_after_register' => [
                 'trigger' => 'catalog/controller/account/success/before',
-                'action' => 'extension/module/oneallssoregister/postRegister'
+                'action' => 'module/oneallssoregister/postRegister'
             ],
             'oneall_before_logout' => [
                 'trigger' => 'catalog/controller/account/logout/before',
-                'action' => 'extension/module/oneallssologin/preLogout'
+                'action' => 'module/oneallssologin/preLogout'
             ],
             'oneall_before_login' => [
                 'trigger' => 'catalog/controller/account/login/before',
-                'action' => 'extension/module/oneallssologin/preLogin'
+                'action' => 'module/oneallssologin/preLogin'
             ],
             'oneall_after_login' => [
                 'trigger' => 'catalog/controller/account/account/before',
-                'action' => 'extension/module/oneallssologin/postLogin'
+                'action' => 'module/oneallssologin/postLogin'
             ],
             'oneall_connect_sso' => [
                 'trigger' => 'catalog/controller/common/header/before',
-                'action' => 'extension/module/oneallssocallback/callback'
+                'action' => 'module/oneallssocallback/callback'
             ]
         );
 

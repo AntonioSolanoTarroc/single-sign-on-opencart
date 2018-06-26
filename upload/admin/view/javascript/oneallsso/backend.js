@@ -5,7 +5,7 @@ jQuery(document).ready(function($) {
         var url = new URL(window.location + "");
         var token = url.searchParams.get("token");
         var data = {
-            'route' : 'extension/module/oneallsso',
+            'route' : 'module/oneallsso',
             'do' : 'autodetect_api_connection',
             'token' : token
         };
@@ -46,7 +46,7 @@ jQuery(document).ready(function($) {
 
         var token = url.searchParams.get("token");
         var data = {
-            'route' : 'extension/module/oneallsso',
+            'route' : 'module/oneallsso',
             'token' : token,
             'do' : 'verify_api_settings',
             'oneall_api_handler' : oasso_handler,

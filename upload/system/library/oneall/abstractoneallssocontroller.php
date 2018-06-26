@@ -91,7 +91,7 @@ class AbstractOneallSsoController extends \Controller
 		$this->storage = new SessionStorage ($this->session);
 
 		// Load Language
-		$this->load->language ('extension/module/oneall');
+		$this->load->language ('module/oneall');
 
 		// Load settings
 		$this->load->model ('setting/setting');

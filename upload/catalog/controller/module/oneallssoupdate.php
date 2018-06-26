@@ -23,7 +23,7 @@
  * http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
  *
  */
-class ControllerExtensionModuleOneallssoUpdate extends \Oneall\AbstractOneallSsoController
+class ControllerModuleOneallssoUpdate extends \Oneall\AbstractOneallSsoController
 {
     /**
      * Keep track of user password
