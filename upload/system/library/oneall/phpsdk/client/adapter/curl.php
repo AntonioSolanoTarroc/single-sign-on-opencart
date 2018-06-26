@@ -370,7 +370,7 @@ class Curl extends AbstractClient
 		$this->options = [];
 
 		// Default Options
-		$this->setOption ('USERAGENT', 'Mozilla/5.0 (OneAll Curly) Gecko/20080311 Firefox/2.0.0.13');
+		$this->setOption ('USERAGENT', 'Mozilla/5.0 (OneAll Curly) Gecko/20080311 SingleSignOn/3.0.0 Firefox/2.0.0.13');
 		$this->setOption ('TIMEOUT', 15);
 		$this->setOption ('CONNECTTIMEOUT', 15);
 		$this->setOption ('SSL_VERIFYPEER', 0);
