@@ -7,6 +7,12 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 ## [Unreleased]
 
 
+## [1.0.1] - 2018-06-26
+### Fixed
+*  PHP notice
+*  remove unused files
+
+
 ## [1.0.0] - 2017-11-02
 ### Added
 - First version released
