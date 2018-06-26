@@ -23,7 +23,6 @@
  * http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
  *
  */
-
 namespace Oneall\Phpsdk;
 
 use Oneall\Phpsdk\Client\ClientInterface;
@@ -33,6 +32,24 @@ class OneallApi
 {
     const MODE_UPDATE_REPLACE = 'replace';
     const MODE_UPDATE_APPEND  = 'append';
+
+    const API_CONNECTION                   = 'connection';
+    const API_IDENTITY                     = 'identity';
+    const API_PROVIDER                     = 'provider';
+    const API_SHARING                      = 'sharing';
+    const API_SHORTURL                     = 'shorturl';
+    const API_SSO                          = 'sso';
+    const API_STORAGE                      = 'storage';
+    const API_USER                         = 'user';
+    const TOKEN_CONNECTION                 = 'connection_token';
+    const TOKEN_USER                       = 'user_token';
+    const TOKEN_IDENTITY                   = 'identity_token';
+    const TOKEN_PAGE                       = 'page_token';
+    const TOKEN_SSO                        = 'sso_token';
+    const TOKEN_SHORTURL                   = 'shorturl_token';
+    const TOKEN_SHARING_PAGE               = 'sharing_page_token';
+    const TOKEN_SHARING_MESSAGE            = 'sharing_message_token';
+    const TOKEN_SHARING_ANALYTICS_SNAPSHOT = 'sharing_analytics_snapshot_token';
 
     /**
      *
@@ -300,15 +317,15 @@ class OneallApi
      * Read SSO Identity Session
      *
      * @param string $identityToken
-     * @param array  $options
+     * @param array $options
      *
      * @see http://docs.oneall.com/api/resources/sso/identity/read-session/
      *
      * @return \Oneall\Phpsdk\Client\Response
      */
-    public function readIdentitySession($identityToken, array $options = [])
+    public function readIdentitySession ($identityToken, array $options = [])
     {
-        return $this->getClient()->get('/sso/sessions/identities/' . $identityToken . '.json', $options);
+        return $this->getClient ()->get ('/sso/sessions/identities/' . $identityToken . '.json', $options);
     }
 
     /**

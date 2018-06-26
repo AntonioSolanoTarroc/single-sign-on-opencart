@@ -90,14 +90,6 @@ class DataExporter
             ];
         }
 
-        if ($customer->getFax())
-        {
-            $data ['phoneNumbers'] [] = [
-                "value" => $customer->getFax(),
-                "type" => "fax"
-            ];
-        }
-
         return $this->cleanUpExport($data);
     }
 
@@ -117,7 +109,6 @@ class DataExporter
             'firstName' => $address ['firstname'],
             'lastName' => $address ['lastname'],
             'phoneNumber' => $customer->getTelephone(),
-            'faxNumber' => $customer->getFax(),
             'streetAddress' => $address ['address_1'], // address 1
             'complement' => $address ['address_2'], // address 2
             'locality' => $address ['city'],

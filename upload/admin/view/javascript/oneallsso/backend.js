@@ -3,11 +3,11 @@ jQuery(document).ready(function($) {
     /* Autodetect API Connection Handler */
     $('#oasso_connection_autodetect').click(function() {
         var url = new URL(window.location + "");
-        var token = url.searchParams.get("token");
+        var user_token = url.searchParams.get("user_token");
         var data = {
             'route' : 'extension/module/oneallsso',
             'do' : 'autodetect_api_connection',
-            'token' : token
+            'user_token': user_token,
         };
 
         jQuery.get('index.php', data, function(responseJson) {
@@ -44,10 +44,10 @@ jQuery(document).ready(function($) {
         var oasso_private_key = jQuery("#oasso_private_key").val();
         var url = new URL(window.location + "");
 
-        var token = url.searchParams.get("token");
+        var user_token = url.searchParams.get("user_token");
         var data = {
             'route' : 'extension/module/oneallsso',
-            'token' : token,
+            'user_token' : user_token,
             'do' : 'verify_api_settings',
             'oneall_api_handler' : oasso_handler,
             'oneall_api_port' : oasso_port,

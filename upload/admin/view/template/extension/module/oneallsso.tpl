@@ -12,119 +12,13 @@
     }
 ?>
 
-<div id="content" class="oasso-container">
+
+
+
+<div id="content">
     <form id="form-layout" action="<?php echo $action; ?>" method="post">
-        <div class="page-header">
-            <div class="container-fluid">
-                <div class="pull-right">
-                    <button type="submit" form="form-account" data-toggle="tooltip" title="<?php echo $button_save; ?>"
-                            class="btn btn-primary">
-                        <i class="fa fa-save"></i>
-                    </button>
-                    <a href="<?php echo $cancel; ?>" data-toggle="tooltip" title="<?php echo $button_cancel; ?>"
-                       class="btn btn-default"><i class="fa fa-reply"></i></a>
-                </div>
-                <h1>
-                    <?php echo $heading_title; ?>
-                </h1>
-                <ul class="breadcrumb">
-                    <?php
-                            foreach ($breadcrumbs as $breadcrumb)
-                            {
-                                ?>
-                    <li><a href="<?php echo $breadcrumb['href']; ?>"><?php echo $breadcrumb['text']; ?></a></li>
-                    <?php
-                            }
-                        ?>
-                </ul>
-            </div>
-        </div>
         <div class="container-fluid">
-                <?php
 
-                    // Success
-                    if ( ! empty ($oasso_success_message))
-                    {
-                        ?>
-            <div class="alert alert-success">
-                <i class="fa fa-cogs"></i> <?php echo $oasso_success_message; ?>
-                <button type="button" class="close" data-dismiss="alert">&times;</button>
-            </div>
-                        <?php
-                    }
-                    // Error
-                    elseif ( ! empty ($oasso_error_message))
-                    {
-                        ?>
-            <div class="alert alert-danger">
-                <i class="fa fa-exclamation-circle"></i><?php echo $oasso_error_message; ?>
-                <button type="button" class="close" data-dismiss="alert">&times;</button>
-            </div>
-                        <?php
-                    }
-                    // Info
-                     elseif ( ! empty ($oasso_intro_message))
-                    {
-                        ?>
-            <p class="alert alert-info">
-                <?php echo $oasso_intro_message ?>
-            </p>
-                        <?php
-                    }
-                ?>
-
-            <div class="panel panel-default">
-                <div class="panel-heading">
-                    <h3 class="panel-title">
-                        <i class="fa fa-plug"></i> <?php echo $oasso_api_connection_handle ?>
-                    </h3>
-                </div>
-                <div class="panel-body">
-                    <div class="well">
-                        <div class="row">
-                            <div class="col-lg-12">
-                                <p><?php echo $oasso_port_field_details ?></p>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-sm-6">
-                                <label class="control-label"
-                                       for="oasso_handler"><?php echo $oasso_connection_handler_label ?></label>
-                                <select name="oasso_handler" id="oasso_handler" class="form-control">
-                                    <option value="curl"
-                                    <?php if ($oasso_handler <> 'fsockopen') {echo ' selected="selected"';} ?>
-                                    ><?php echo $oasso_connection_handled_option_curl ?></option>
-                                    <option value="fsockopen"
-                                    <?php if($oasso_handler == 'fsockopen') {echo ' selected="selected"';} ?>
-                                    ><?php echo $oasso_connection_handled_option_fsockopen ?></option>
-                                </select>
-                            </div>
-                            <div class="col-sm-6">
-                                <label class="control-label"
-                                       for="oasso_port"><?php echo $oasso_port_field_label ?></label>
-                                <select name="oasso_port" id="oasso_port" class="form-control">
-                                    <option value="443"
-                                    <?php if ($oasso_port <> 80) {echo ' selected="selected"';}
-                                    ?>><?php echo $oasso_port_field_443_label; ?></option>
-                                    <option value="80"
-                                    <?php if ($oasso_port == 80) {echo ' selected="selected"';} ?>
-                                    ><?php echo $oasso_port_field_80_label; ?></option>
-                                </select>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-4 col-lg-2">
-                                <input id="oasso_connection_autodetect" name="oasso_connection_autodetect"
-                                       value="<?php echo $oasso_autodetect_api_connection; ?>" type="button"
-                                       class="btn btn-block btn-lg btn-info"/>
-                            </div>
-                            <div class="col-md-8 col-lg-10">
-                                <div id="oasso_connection_autodetect_result"></div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
 
             <div class="panel panel-default">
                 <div class="panel-heading">

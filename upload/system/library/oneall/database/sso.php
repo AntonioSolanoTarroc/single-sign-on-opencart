@@ -323,15 +323,15 @@ class Sso
         $escaped = $this->db->escape($password);
 
         $query = ' SELECT * ' .
-                 ' FROM ' . DB_PREFIX . 'customer ' .
+                 ' FROM ' . DB_PREFIX . 'customer' .
                  ' WHERE ' .
                  '      LOWER(email) = "' . $this->db->escape(utf8_strtolower($email)) . '"
                                             AND (
                                                 password = SHA1(CONCAT(salt, SHA1(CONCAT(salt, SHA1("' . $escaped . '")))))
                                                 OR password = "' . $md5 . '" ' .
                  '      ) ' .
-                 '      AND status = "1" ' .
-                 '      AND approved = "1"';
+                 '      AND status = "1" '
+        ;
 
         $customer_query = $this->db->query($query);
         if (!$customer_query->num_rows)
@@ -537,7 +537,7 @@ class Sso
             return $this->customerAccount->addCustomer($data);
         }
 
-        $this->customerAccount->editCustomer($data);
+        $this->customerAccount->editCustomer($data['customer_id'], $data);
 
         return $data['customer_id'];
     }

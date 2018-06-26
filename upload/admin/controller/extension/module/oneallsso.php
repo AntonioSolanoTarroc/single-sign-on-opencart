@@ -36,12 +36,6 @@ class ControllerExtensionModuleOneallsso extends Controller
     protected $clientBuilder;
 
     /**
-     *
-     * @var \ModelExtensionEvent
-     */
-    protected $event_model;
-
-    /**
      * Installer
      */
     public function install()
@@ -72,9 +66,9 @@ class ControllerExtensionModuleOneallsso extends Controller
 
         foreach ($this->getEvents() as $code => $event)
         {
-            if (!$this->getEventModel()->getEvent($code, $event ['trigger'], $event ['action']))
+            if (!$this->model_setting_event->getEvent($code, $event ['trigger'], $event ['action']))
             {
-                $this->getEventModel()->addEvent($code, $event ['trigger'], $event ['action']);
+                $this->model_setting_event->addEvent($code, $event ['trigger'], $event ['action']);
             }
         }
     }
@@ -95,7 +89,7 @@ class ControllerExtensionModuleOneallsso extends Controller
         // removing subscribed event.
         foreach ($this->getEvents() as $code => $event)
         {
-            $this->getEventModel()->deleteEvent($code);
+            $this->model_setting_event->deleteEvent($code);
         }
     }
 
@@ -125,13 +119,12 @@ class ControllerExtensionModuleOneallsso extends Controller
 
         if (($this->request->server ['REQUEST_METHOD'] == 'POST') && $this->validate())
         {
-            $form                = new oasso_form_handler ();
+            $form = new oasso_form_handler ();
             $this->request->post = $form->map($this->request->post);
-
             $this->model_setting_setting->editSetting('oasso', $this->request->post);
 
             // Redirect
-            $args = ('token=' . $this->session->data ['token'] . '&oa_action=saved');
+            $args = ('user_token=' . $this->session->data ['user_token'] . '&oa_action=saved');
             $this->response->redirect($this->url->link('extension/module/oneallsso', $args, true));
         }
 
@@ -148,7 +141,7 @@ class ControllerExtensionModuleOneallsso extends Controller
         }
 
         // Display Page
-        $this->response->setOutput($this->load->view('extension/module/oneallsso.tpl', $data));
+        $this->response->setOutput($this->load->view('extension/module/oneallsso', $data));
     }
 
     /**
@@ -204,23 +197,23 @@ class ControllerExtensionModuleOneallsso extends Controller
         // language
         $data = array_merge($data, $this->load->language('extension/module/oneallsso'));
 
-        $token = $this->session->data ['token'];
+        $user_token = $this->session->data ['user_token'];
 
         // BreadCrumbs
         $data ['breadcrumbs'] = array(
             array(
                 'text' => $this->language->get('text_home'),
-                'href' => $this->url->link('common/dashboard', 'token=' . $token, true),
+                'href' => $this->url->link('common/dashboard', 'user_token=' . $user_token, true),
                 'separator' => false
             ),
             array(
                 'text' => $this->language->get('text_extension'),
-                'href' => $this->url->link('extension/extension', 'token=' . $token, true),
+                'href' => $this->url->link('extension/extension', 'user_token=' . $user_token, true),
                 'separator' => ' :: '
             ),
             array(
                 'text' => $this->language->get('heading_title'),
-                'href' => $this->url->link('extension/module/oneallsso', 'token=' . $token, true),
+                'href' => $this->url->link('extension/module/oneallsso', 'user_token=' . $user_token, true),
                 'separator' => ' :: '
             )
         );
@@ -229,17 +222,17 @@ class ControllerExtensionModuleOneallsso extends Controller
         $this->document->setTitle($this->language->get('heading_title'));
 
         // Buttons
-        $data ['action'] = $this->url->link('extension/module/oneallsso', 'token=' . $token, true);
-        $data ['cancel'] = $this->url->link('extension/module/oneallsso', 'token=' . $token, true);
+        $data ['action'] = $this->url->link('extension/module/oneallsso', 'user_token=' . $user_token, true);
+        $data ['cancel'] = $this->url->link('extension/module/oneallsso', 'user_token=' . $user_token, true);
 
         // Template
-        $data ['header']      = $this->load->controller('common/header');
+        $data ['header'] = $this->load->controller('common/header');
         $data ['column_left'] = $this->load->controller('common/column_left');
-        $data ['footer']      = $this->load->controller('common/footer');
+        $data ['footer'] = $this->load->controller('common/footer');
 
         // Model
         $model = $this->model_setting_setting->getSetting('oasso');
-        $data  = array_merge($data, $model);
+        $data = array_merge($data, $model);
 
         return $data;
     }
@@ -274,12 +267,12 @@ class ControllerExtensionModuleOneallsso extends Controller
         $get = (is_array($this->request->get) ? $this->request->get : array());
 
         // Parse arguments
-        $oneall_subdomain   = (!empty ($get ['oneall_subdomain']) ? trim($get ['oneall_subdomain']) : '');
-        $oneall_public      = (!empty ($get ['oneall_public']) ? trim($get ['oneall_public']) : '');
-        $oneall_private     = (!empty ($get ['oneall_private']) ? trim($get ['oneall_private']) : '');
+        $oneall_subdomain = (!empty ($get ['oneall_subdomain']) ? trim($get ['oneall_subdomain']) : '');
+        $oneall_public = (!empty ($get ['oneall_public']) ? trim($get ['oneall_public']) : '');
+        $oneall_private = (!empty ($get ['oneall_private']) ? trim($get ['oneall_private']) : '');
         $oneall_api_handler = (!empty ($get ['oneall_api_handler']) ? trim($get ['oneall_api_handler']) : '');
-        $oneall_api_port    = (!empty ($get ['oneall_api_port']) ? trim($get ['oneall_api_port']) : '');
-        $isSecure           = ($oneall_api_port == 443 ? true : false);
+        $oneall_api_port = (!empty ($get ['oneall_api_port']) ? trim($get ['oneall_api_port']) : '');
+        $isSecure = ($oneall_api_port == 443 ? true : false);
 
         // Check if all fields have been filled out.
         if (strlen($oneall_subdomain) == 0 || strlen($oneall_public) == 0 || strlen($oneall_private) == 0)
@@ -332,11 +325,11 @@ class ControllerExtensionModuleOneallsso extends Controller
                 if (empty ($body->response->result->data->site->subscription_plan->features->has_single_signon))
                 {
                     $status_message = $lang ['oasso_text_ajax_upgrade_your_plan'];
-                    $status         = false;
+                    $status = false;
                     break;
                 }
                 $status_message = $lang ['oasso_text_ajax_settings_ok'];
-                $status         = true;
+                $status = true;
                 break;
 
             // Authentication Error.
@@ -378,37 +371,37 @@ class ControllerExtensionModuleOneallsso extends Controller
         if ($this->check_curl(true) === true)
         {
             $status_message = $lang ['oasso_text_ajax_curl_ok_443'];
-            $handler        = 'curl';
-            $port           = '443';
+            $handler = 'curl';
+            $port = '443';
         }
         // Check FSOCKOPEN HTTPS - Port 443.
         elseif ($this->check_fsockopen(true) == true)
         {
             $status_message = $lang ['oasso_text_ajax_fsockopen_ok_443'];
-            $handler        = 'fsockopen';
-            $port           = '443';
+            $handler = 'fsockopen';
+            $port = '443';
         }
         // Check CURL HTTP - Port 80.
         elseif ($this->check_curl(false) === true)
         {
             $status_message = $lang ['oasso_text_ajax_curl_ok_80'];
-            $handler        = 'curl';
-            $port           = '80';
+            $handler = 'curl';
+            $port = '80';
         }
         // Check FSOCKOPEN HTTP - Port 80.
         elseif ($this->check_fsockopen(false) == true)
         {
             $status_message = '|' . $lang ['oasso_text_ajax_fsockopen_ok_80'];
-            $handler        = 'fsockopen';
-            $port           = '80';
+            $handler = 'fsockopen';
+            $port = '80';
         }
         // No working handler found.
         else
         {
-            $status         = 'error';
+            $status = 'error';
             $status_message = $lang ['oasso_text_ajax_no_handler'];
-            $handler        = null;
-            $port           = null;
+            $handler = null;
+            $port = null;
         }
 
         $response = [
@@ -495,20 +488,6 @@ class ControllerExtensionModuleOneallsso extends Controller
         }
 
         return true;
-    }
-
-    /**
-     *
-     * @return \ModelExtensionEvent
-     */
-    private function getEventModel()
-    {
-        if (!$this->model_extension_event instanceof ModelExtensionEvent)
-        {
-            $this->load->model('extension/event');
-        }
-
-        return $this->model_extension_event;
     }
 
     /**
@@ -612,8 +591,8 @@ class oasso_form_handler
      */
     public function map(array $post)
     {
-        $hour          = 3600;
-        $day           = (3600 * 24);
+        $hour = 3600;
+        $day = (3600 * 24);
         $lifetime_list = [
             $hour * 2,
             $hour * 4,
@@ -631,18 +610,18 @@ class oasso_form_handler
             $day * 28
         ];
 
-        $values ['oasso_handler']                  = $this->get($post, 'oasso_handler', ['curl', 'fsockopen'], 'curl');
-        $values ['oasso_port']                     = $this->get($post, 'oasso_port', [443, 80], 443);
-        $values ['oasso_accounts_create_auto']     = $this->get($post, 'oasso_accounts_create_auto', [0, 1], 1);
+        $values ['oasso_handler'] = $this->get($post, 'oasso_handler', ['curl', 'fsockopen'], 'curl');
+        $values ['oasso_port'] = $this->get($post, 'oasso_port', [443, 80], 443);
+        $values ['oasso_accounts_create_auto'] = $this->get($post, 'oasso_accounts_create_auto', [0, 1], 1);
         $values ['oasso_accounts_create_sendmail'] = $this->get($post, 'oasso_accounts_create_sendmail', [0, 1], 1);
-        $values ['oasso_accounts_link_automatic']  = $this->get($post, 'oasso_accounts_link_automatic', [0, 1], 1);
+        $values ['oasso_accounts_link_automatic'] = $this->get($post, 'oasso_accounts_link_automatic', [0, 1], 1);
         $values ['oasso_accounts_link_unverified'] = $this->get($post, 'oasso_accounts_link_unverified', [0, 1], 0);
-        $values ['oasso_session_lifetime']         = $this->get($post, 'oasso_session_lifetime', $lifetime_list, 7200);
-        $values ['oasso_public_key']               = $this->get($post, 'oasso_public_key', [], '');
-        $values ['oasso_private_key']              = $this->get($post, 'oasso_private_key', [], '');
-        $values ['oasso_session_realm']            = $this->get($post, 'oasso_session_realm', [], '');
-        $values ['oasso_session_subrealm']         = $this->get($post, 'oasso_session_subrealm', [], '');
-        $values ['oasso_api_subdomain']            = $this->handle_subdomain($post, 'oasso_api_subdomain');
+        $values ['oasso_session_lifetime'] = $this->get($post, 'oasso_session_lifetime', $lifetime_list, 7200);
+        $values ['oasso_public_key'] = $this->get($post, 'oasso_public_key', [], '');
+        $values ['oasso_private_key'] = $this->get($post, 'oasso_private_key', [], '');
+        $values ['oasso_session_realm'] = $this->get($post, 'oasso_session_realm', [], '');
+        $values ['oasso_session_subrealm'] = $this->get($post, 'oasso_session_subrealm', [], '');
+        $values ['oasso_api_subdomain'] = $this->handle_subdomain($post, 'oasso_api_subdomain');
 
         return $values;
     }

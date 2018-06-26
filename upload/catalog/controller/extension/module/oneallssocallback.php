@@ -1,8 +1,8 @@
 <?php
 /**
- * @package      Oneall Single Sign-On
- * @copyright    Copyright 2017-Present http://www.oneall.com
- * @license      GNU/GPL 2 or later
+ * @package   	Oneall Single Sign-On
+ * @copyright 	Copyright 2017-Present http://www.oneall.com
+ * @license   	GNU/GPL 2 or later
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -21,11 +21,6 @@
  * The "GNU General Public License" (GPL) is available at
  * http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
  *
- */
-
-/**
- * ControllerExtensionModuleOneallsso class
- * This class is the event listener used by the sso oneall plugin.
  */
 class ControllerExtensionModuleOneallSsoCallback extends \Oneall\AbstractOneallSsoController
 {
@@ -110,7 +105,7 @@ class ControllerExtensionModuleOneallSsoCallback extends \Oneall\AbstractOneallS
 
         // Here we have a customer associated to the user token.
         // Lets check if the user is allowed to connect (opencart config)
-        if ($customer['status'] != 1 || $customer['approved'] != 1)
+        if ($customer['status'] != 1)
         {
             $this->storage->allowConnection(false);
             throw new \RuntimeException('Please, sign in with your credentials.');
