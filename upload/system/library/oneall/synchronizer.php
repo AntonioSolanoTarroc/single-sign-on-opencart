@@ -115,6 +115,9 @@ class Synchronizer
         $identityResponse = new IdentityFacade (json_decode($rawResponse->getBody()));
 
         $customer = $this->mergeCustomerData($customer, $identityResponse);
+
+
+
         $customerId = $this->database->saveCustomer($customer, $_SERVER ['REMOTE_ADDR']);
 
         $this->pullAddresses((array) $identityResponse->getAddresses(), $customerId);

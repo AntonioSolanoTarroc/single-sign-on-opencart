@@ -125,6 +125,7 @@ class ControllerExtensionModuleOneallssoUpdate extends \Oneall\AbstractOneallSso
      */
     public function postUpdate()
     {
+
         $inModification = $this->storage->isLastAction(\Oneall\SessionStorage::ACTION_ACCOUNT);
         if (!$inModification || !$this->customer instanceof \Cart\Customer || !$this->customer->getId())
         {
@@ -139,77 +140,15 @@ class ControllerExtensionModuleOneallssoUpdate extends \Oneall\AbstractOneallSso
         $body          = json_decode($response->getBody());
         $identityData  = new \Oneall\Phpsdk\Response\IdentityFacade($body);
 
-        $identity = [
-            "name" => [
-                "givenName" => $this->customer->getFirstname(),
-                "familyName" => $this->customer->getLastname(),
-            ],
-        ];
-
-        // adding emails
-        $identity ["emails"] = [];
-        //$identity ["emails"] = $identityData->getEmails();
-        if (!$this->emailAlreadyExists($identityData, $this->customer->getEmail()))
-        {
-            $identity ["emails"][] = [
-                "value" => $this->customer->getEmail(),
-                'is_verified' => false,
-            ];
-        }
-
-        // adding numbers
-        $numbers                   = $identityData->getPhoneNumbers();
-        $newNumbers                = [
-            'home' => $this->customer->getTelephone(),
-            'fax' => $this->customer->getFax()
-        ];
-        $identity ["phoneNumbers"] = $this->updatePhoneNumbers($numbers, $newNumbers);
+        $identity = $this->buildIdentityDataFromCustomer($this->customer, $identityData);
 
         // updating distant account
         $mode      = \Oneall\Phpsdk\OneallApi::MODE_UPDATE_REPLACE;
         $userToken = $this->ssoDatabase->getUserTokenFromId($this->customer->getId());
+
         $this->api->updateUser($userToken, null, null, null, $identity, $mode);
 
         return null;
     }
 
-    /**
-     * @param \Oneall\Phpsdk\Response\IdentityFacade $identityData
-     * @param  string                                $newEmail
-     *
-     * @return bool
-     */
-    private function emailAlreadyExists(\Oneall\Phpsdk\Response\IdentityFacade $identityData, $newEmail)
-    {
-        foreach ($identityData->getEmails() as $email)
-        {
-            if ($email->value == $newEmail)
-            {
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-    /**
-     * Update oneall identity numbers
-     *
-     * @param array $numbers    Numbers from identity response
-     * @param array $newNumbers array of number to add (key=type, value=number)
-     *
-     * @return mixed
-     */
-    private function updatePhoneNumbers($numbers, array $newNumbers)
-    {
-        foreach ($numbers as &$number)
-        {
-            if (!empty($number->type) && !empty($newNumbers[$number->type]))
-            {
-                $number->value = $newNumbers[$number->type];
-            }
-        }
-
-        return $numbers;
-    }
 }
