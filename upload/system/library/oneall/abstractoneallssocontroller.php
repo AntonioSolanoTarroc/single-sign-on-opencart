@@ -28,6 +28,7 @@ namespace Oneall;
 use Oneall\Database\Sso;
 use Oneall\Phpsdk\Client\Builder;
 use Oneall\Phpsdk\OneallApi;
+use Oneall\Phpsdk\Response\IdentityFacade;
 
 /**
  * Class AbstractOneallSsoController
@@ -200,4 +201,80 @@ class AbstractOneallSsoController extends \Controller
 		$propertyReflection->setAccessible (true);
 		$propertyReflection->setValue ($this->document, $scripts);
 	}
+
+    /**
+     * @param \Cart\Customer                         $customer
+     * @param \Oneall\Phpsdk\Response\IdentityFacade $existingIdentity
+     *
+     * @return array
+     */
+    protected function buildIdentityDataFromCustomer(\Cart\Customer $customer, IdentityFacade $existingIdentity)
+    {
+        $identity = [
+            "name" => [
+                "givenName" => $customer->getFirstname(),
+                "familyName" => $customer->getLastname(),
+            ],
+        ];
+
+        // adding emails
+        $identity ["emails"] = [];
+        //$identity ["emails"] = $identityData->getEmails();
+        if (!$this->emailAlreadyExists($existingIdentity, $this->customer->getEmail()))
+        {
+            $identity ["emails"][] = [
+                "value" => $this->customer->getEmail(),
+                'is_verified' => false,
+            ];
+        }
+
+        // adding numbers
+        $numbers = $existingIdentity->getPhoneNumbers();
+        $newNumbers = [
+            'home' => $this->customer->getTelephone(),
+        ];
+        $identity ["phoneNumbers"] = $this->updatePhoneNumbers($numbers, $newNumbers);
+
+        return $identity;
+    }
+
+    /**
+     * @param \Oneall\Phpsdk\Response\IdentityFacade $identityData
+     * @param  string                                $newEmail
+     *
+     * @return bool
+     */
+    private function emailAlreadyExists(\Oneall\Phpsdk\Response\IdentityFacade $identityData, $newEmail)
+    {
+        foreach ($identityData->getEmails() as $email)
+        {
+            if ($email->value == $newEmail)
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * Update oneall identity numbers
+     *
+     * @param array $numbers    Numbers from identity response
+     * @param array $newNumbers array of number to add (key=type, value=number)
+     *
+     * @return mixed
+     */
+    private function updatePhoneNumbers($numbers, array $newNumbers)
+    {
+        foreach ($numbers as &$number)
+        {
+            if (!empty($number->type) && !empty($newNumbers[$number->type]))
+            {
+                $number->value = $newNumbers[$number->type];
+            }
+        }
+
+        return $numbers;
+    }
 }

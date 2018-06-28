@@ -301,7 +301,7 @@ class ControllerModuleOneallsso extends Controller
         // Try to establish a connection.
         //
         $client = $this->getBuilder()->build($oneall_api_handler, $oneall_subdomain, $oneall_public, $oneall_private,
-                                             $isSecure, 'api.oneall.loc')
+                                             $isSecure, 'api.oneall.com')
         ;
 
         // ensure function is working through a test
@@ -483,7 +483,7 @@ class ControllerModuleOneallsso extends Controller
             return false;
         }
 
-        $client = $this->getBuilder()->build($handler, 'www', '', '', $isSecure, 'oneall.loc');
+        $client = $this->getBuilder()->build($handler, 'www', '', '', $isSecure, 'oneall.com');
 
         // ensure function is working through a test
         $result = $client->get('/ping.html');

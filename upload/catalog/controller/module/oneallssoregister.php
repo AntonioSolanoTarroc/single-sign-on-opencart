@@ -60,6 +60,20 @@ class ControllerModuleOneallssoRegister extends \Oneall\AbstractOneallSsoControl
 
         $this->startSession($this->customer->getId());
 
+        // loading identity data to check if we have something to addd or not
+        // getting current email list in order to know if we have to add
+        $identityToken = $this->ssoDatabase->getIdentityToken($this->customer->getId());
+        $response      = $this->api->getIdentity($identityToken);
+
+        $body          = json_decode($response->getBody());
+        $identityData  = new \Oneall\Phpsdk\Response\IdentityFacade($body);
+        $identity = $this->buildIdentityDataFromCustomer($this->customer, $identityData);
+
+        // updating distant account
+        $mode      = \Oneall\Phpsdk\OneallApi::MODE_UPDATE_REPLACE;
+        $userToken = $this->ssoDatabase->getUserTokenFromId($this->customer->getId());
+        $this->api->updateUser($userToken, null, null, null, $identity, $mode);
+
         return null;
     }
 }
