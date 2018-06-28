@@ -47,18 +47,20 @@ class ControllerModuleOneallSsoLogin extends \Oneall\AbstractOneallSsoController
     /**
      * User to connect the recently connected user.
      *
+     * @param bool $force
+     *
      * @return null
      */
-    public function postLogin($event)
+    public function postLogin($force = false)
     {
         $isLoginAction = $this->storage->isLastAction(\Oneall\SessionStorage::ACTION_LOGIN);
-        if (!$isLoginAction || !$this->customer instanceof \Cart\Customer || !$this->customer->getId())
+        if (!$isLoginAction && !$force)
         {
             return null;
         }
         $this->storage->setLastAction(null);
         // if a user is logged
-        if (!$this->customer instanceof \Cart\Customer)
+        if (!$this->customer instanceof \Cart\Customer || !$this->customer->getId())
         {
             return null;
         }
