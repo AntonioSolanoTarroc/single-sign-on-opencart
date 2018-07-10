@@ -1,6 +1,6 @@
 ## Available Versions
-* **Single Sign-On for OpenCart 2.0+**
-* **Single Sign-On for OpenCart 2.3+**
+* [Single Sign-On for OpenCart 2.2+](https://github.com/oneall/single-sign-on-opencart/tree/opencart/2.2+)
+* [Single Sign-On for OpenCart 2.3+](https://github.com/oneall/single-sign-on-opencart/tree/opencart/2.3+)
 * **Single Sign-On for OpenCart 3.0+**
 
 
