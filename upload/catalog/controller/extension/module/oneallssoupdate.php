@@ -86,13 +86,21 @@ class ControllerExtensionModuleOneallssoUpdate extends \Oneall\AbstractOneallSso
      *
      * @return null
      */
-    public function postPasswordUpdate($event)
+    public function postPasswordUpdate()
     {
-        $inModification = $this->storage->isLastAction(\Oneall\SessionStorage::ACTION_PASSWORD);
-        if (!$inModification || !$this->customer instanceof \Cart\Customer || !$this->customer->getId())
+        // if previous action is not "update password", we skip
+        if (!$this->storage->isLastAction(\Oneall\SessionStorage::ACTION_PASSWORD))
         {
             return null;
         }
+
+        // if a user is not logged in
+        if (!$this->customer instanceof \Cart\Customer || !$this->customer->getId())
+        {
+            return null;
+        }
+
+        // reset previous action
         $this->storage->setLastAction(null);
 
         $userToken = $this->ssoDatabase->getUserTokenFromId($this->customer->getId());
@@ -113,6 +121,7 @@ class ControllerExtensionModuleOneallssoUpdate extends \Oneall\AbstractOneallSso
         {
             return null;
         }
+
         $this->storage->setLastAction(\Oneall\SessionStorage::ACTION_ACCOUNT);
 
         return null;
@@ -125,13 +134,21 @@ class ControllerExtensionModuleOneallssoUpdate extends \Oneall\AbstractOneallSso
      */
     public function postUpdate()
     {
-
-        $inModification = $this->storage->isLastAction(\Oneall\SessionStorage::ACTION_ACCOUNT);
-        if (!$inModification || !$this->customer instanceof \Cart\Customer || !$this->customer->getId())
+        // if previous action is not "update password", we skip
+        if (!$this->storage->isLastAction(\Oneall\SessionStorage::ACTION_ACCOUNT))
         {
             return null;
         }
+
+        // if a user is not logged in
+        if (!$this->customer instanceof \Cart\Customer || !$this->customer->getId())
+        {
+            return null;
+        }
+
+        // reset previous action
         $this->storage->setLastAction(null);
+
 
         // loading identity data to check if we have something to addd or not
         // getting current email list in order to know if we have to add

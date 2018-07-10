@@ -498,10 +498,18 @@ class ControllerExtensionModuleOneallsso extends Controller
     private function getEvents()
     {
         $events = array(
+
+            // update data
             'oneall_before_update' => [
                 'trigger' => 'catalog/controller/account/edit/before',
                 'action' => 'extension/module/oneallssoupdate/preUpdate'
             ],
+            'oneall_after_update' => [
+                'trigger' => 'catalog/controller/account/account/before',
+                'action' => 'extension/module/oneallssoupdate/postUpdate'
+            ],
+
+            // Update password
             'oneall_before_password' => [
                 'trigger' => 'catalog/controller/account/password/before',
                 'action' => 'extension/module/oneallssoupdate/prePasswordUpdate'
@@ -510,10 +518,8 @@ class ControllerExtensionModuleOneallsso extends Controller
                 'trigger' => 'catalog/controller/account/account/after',
                 'action' => 'extension/module/oneallssoupdate/postPasswordUpdate'
             ],
-            'oneall_after_update' => [
-                'trigger' => 'catalog/controller/account/account/after',
-                'action' => 'extension/module/oneallssoupdate/postUpdate'
-            ],
+
+            // Register
             'oneall_before_register' => [
                 'trigger' => 'catalog/controller/account/register/before',
                 'action' => 'extension/module/oneallssoregister/preRegister'
@@ -522,10 +528,14 @@ class ControllerExtensionModuleOneallsso extends Controller
                 'trigger' => 'catalog/controller/account/success/before',
                 'action' => 'extension/module/oneallssoregister/postRegister'
             ],
+
+            // Logout
             'oneall_before_logout' => [
                 'trigger' => 'catalog/controller/account/logout/before',
                 'action' => 'extension/module/oneallssologin/preLogout'
             ],
+
+            // Login
             'oneall_before_login' => [
                 'trigger' => 'catalog/controller/account/login/before',
                 'action' => 'extension/module/oneallssologin/preLogin'
@@ -534,6 +544,8 @@ class ControllerExtensionModuleOneallsso extends Controller
                 'trigger' => 'catalog/controller/account/account/before',
                 'action' => 'extension/module/oneallssologin/postLogin'
             ],
+
+            // listener
             'oneall_connect_sso' => [
                 'trigger' => 'catalog/controller/common/header/before',
                 'action' => 'extension/module/oneallssocallback/callback'

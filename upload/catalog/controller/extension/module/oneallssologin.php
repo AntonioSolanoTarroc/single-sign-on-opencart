@@ -51,19 +51,23 @@ class ControllerExtensionModuleOneallSsoLogin extends \Oneall\AbstractOneallSsoC
      *
      * @return null
      */
-    public function postLogin($force = false)
+    public function postLogin()
     {
-        $isLoginAction = $this->storage->isLastAction(\Oneall\SessionStorage::ACTION_LOGIN);
-        if (!$isLoginAction && !$force)
+        // if previous action is not "login", we skip
+        if (!$this->storage->isLastAction(\Oneall\SessionStorage::ACTION_LOGIN))
         {
             return null;
         }
-        $this->storage->setLastAction(null);
-        // if a user is logged
+
+        // if a user is not logged in, we skip
         if (!$this->customer instanceof \Cart\Customer || !$this->customer->getId())
         {
             return null;
         }
+
+        // reset previous action
+        $this->storage->setLastAction(null);
+
 
         //  we recreate user(and link)
         $this->synchronizer->push($this->customer, $this->storage->consumePassword());
