@@ -153,7 +153,6 @@ class AbstractOneallSsoController extends \Controller
 
         // start a new session on oneall servers
         $response = $this->api->startIdentitySession($identityToken);
-
         // Get & store the sso session token
         $sessionToken = $this->facade->getSsoSessionToken($identityToken);
         $this->storage->storeSessionToken($sessionToken);
@@ -223,7 +222,7 @@ class AbstractOneallSsoController extends \Controller
 
         // adding emails
         $identity ["emails"] = [];
-        //$identity ["emails"] = $identityData->getEmails();
+        $identity ["emails"] = $existingIdentity->getEmails();
         if (!$this->emailAlreadyExists($existingIdentity, $this->customer->getEmail()))
         {
             $identity ["emails"][] = [

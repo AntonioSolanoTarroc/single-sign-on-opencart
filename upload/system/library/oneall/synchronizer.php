@@ -250,16 +250,17 @@ class Synchronizer
 
         $numbers = $identity->getPhoneNumbers();
         $unknown = null;
+
         foreach ($numbers as $number)
         {
             switch ($number->type)
             {
                 case 'fax' :
-                    $this->fax = $number->value;
+                    $customer ['fax'] = $number->value;
                     break;
 
                 case 'home' :
-                    $this->telephone = $number->value;
+                    $customer ['telephone'] = $number->value;
                     break;
                 default :
                     if ($unknown === null)
