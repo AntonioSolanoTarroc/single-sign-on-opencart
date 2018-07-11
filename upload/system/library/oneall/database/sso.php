@@ -184,15 +184,14 @@ class Sso
      *
      * @return string|null null on error or not found
      */
-    public function getIdentityToken($customerId, $provider = 'storage')
+    public function getIdentityToken($customerId)
     {
-        if (empty($customerId) || empty($provider))
+        if (empty($customerId))
         {
             return null;
         }
 
         $customerId = $this->db->escape($customerId);
-        $provider   = $this->db->escape($provider);
 
         $query = 'SELECT ' .
                  '  i.identity_token, ' .
@@ -200,7 +199,7 @@ class Sso
                  '  u.customer_id ' .
                  'FROM `' . DB_PREFIX . 'oasl_user` u ' .
                  '  LEFT JOIN `' . DB_PREFIX . 'oasl_identity` i ON u.oasl_user_id = i.oasl_user_id ' .
-                 'WHERE u.customer_id = ' . $customerId . ' AND i.identity_provider = "' . $provider . '"';
+                 'WHERE u.customer_id = ' . $customerId . ' ';
 
         $results = $this->db->query($query);
         if (!$results->num_rows || empty($results->row['identity_token']))
