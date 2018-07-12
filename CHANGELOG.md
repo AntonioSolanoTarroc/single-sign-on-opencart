@@ -7,6 +7,13 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 ## [Unreleased]
 
 
+## [3.0.1] - 2018-07-12
+### Added
+* Add cloud login
+
+### Fixed
+* Fix for Social Login plugin compatibility
+
 ## [3.0.0] - 2018-06-26
 ### Fixed
 * For Opencart 3.0.0
