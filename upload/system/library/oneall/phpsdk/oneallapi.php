@@ -23,6 +23,7 @@
  * http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
  *
  */
+
 namespace Oneall\Phpsdk;
 
 use Oneall\Phpsdk\Client\ClientInterface;
@@ -81,7 +82,7 @@ class OneallApi
     public function __construct(ClientInterface $client, ProxyConfiguration $proxy = null)
     {
         $this->client = $client;
-        $this->proxy  = $proxy;
+        $this->proxy = $proxy;
     }
 
     /**
@@ -231,7 +232,7 @@ class OneallApi
         $login = null,
         $password = null,
         array $identity = [],
-        $mode = self::MODE_UPDATE_REPLACE,
+        $mode = self::MODE_UPDATE_APPEND,
         array $options = []
     ) {
         if (empty ($externalId) && empty ($login) && empty ($password) && empty ($identity))
@@ -317,15 +318,15 @@ class OneallApi
      * Read SSO Identity Session
      *
      * @param string $identityToken
-     * @param array $options
+     * @param array  $options
      *
      * @see http://docs.oneall.com/api/resources/sso/identity/read-session/
      *
      * @return \Oneall\Phpsdk\Client\Response
      */
-    public function readIdentitySession ($identityToken, array $options = [])
+    public function readIdentitySession($identityToken, array $options = [])
     {
-        return $this->getClient ()->get ('/sso/sessions/identities/' . $identityToken . '.json', $options);
+        return $this->getClient()->get('/sso/sessions/identities/' . $identityToken . '.json', $options);
     }
 
     /**

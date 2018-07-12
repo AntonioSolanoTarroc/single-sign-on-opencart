@@ -66,12 +66,15 @@ class DataExporter
             $exportedAddresses [] = $this->exportAddress($address, $customer);
         }
 
+        $oa_user = $this->database->getOaslUser($customer->getId());
         $data = [
             "name" => [
                 "givenName" => $customer->getFirstName(),
                 "familyName" => $customer->getLastName()
             ],
-            "addresses" => $exportedAddresses
+            "addresses" => $exportedAddresses,
+            "provider" => $oa_user['identity_provider'],
+            "identity_token" => $oa_user['identity_token'],
         ];
 
         if ($customer->getEmail())

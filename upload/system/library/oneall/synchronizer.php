@@ -135,7 +135,7 @@ class Synchronizer
     public function push(Customer $customer, $password = null)
     {
         $data = $this->exporter->exportCustomer($customer);
-        $userToken = $this->database->getIdentityToken($customer->getId());
+        $userToken = $this->database->getUserTokenFromId($customer->getId());
 
         // if no token in DB, we have a new customer, freshly registered.
         // we'll check if an account for its email has been created.
@@ -143,9 +143,7 @@ class Synchronizer
         {
             $response = $this->api->lookUpByCredentials($customer->getEmail());
             $userResponse = new ResponseFacade (json_decode($response->getBody()));
-
             $userToken = $userResponse->getUserToken();
-
             unset ($response);
         }
 
@@ -158,7 +156,6 @@ class Synchronizer
         $responseFacade = new \Oneall\Phpsdk\Response\ResponseFacade ($response);
 
         // link customer to the user/identity token if the customer is already created.
-        // (
         $userToken = $responseFacade->getUserToken();
         $identityToken = $responseFacade->getIdentityToken();
         $identityProvider = $responseFacade->getProvider();
