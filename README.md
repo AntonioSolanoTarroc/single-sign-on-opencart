@@ -1,16 +1,10 @@
 ## Available Versions
-* **[Single Sign-On for OpenCart 2.0+**
-* **[Single Sign-On for OpenCart 2.3+**
-* **[Single Sign-On for OpenCart 3.0+**
-
-## Available Versions
-* **Single Sign-On for OpenCart 2.0+**
-* [Single Sign-On for OpenCart 2.3+](https://github.com/oneall/single-sign-on-opencart
-/tree/opencart/2.3+)
+* **Single Sign-On for OpenCart 2.2+**
+* [Single Sign-On for OpenCart 2.3+](https://github.com/oneall/single-sign-on-opencart/tree/opencart/2.3+)
 * [Single Sign-On for OpenCart 3.0+](https://github.com/oneall/single-sign-on-opencart/tree/opencart/3.0+)
 
 
-# Single Sign-On 1.0.0 for OpenCart 2.0.x
+# Single Sign-On 1.0.1 for OpenCart 2.2.x
 
 Single Sign-On for OpenCart is a professional extension that automatically 
 signs users in as they browse between multiple and independent OpenCart 

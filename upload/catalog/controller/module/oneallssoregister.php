@@ -38,6 +38,7 @@ class ControllerModuleOneallssoRegister extends \Oneall\AbstractOneallSsoControl
         }
 
         $this->storage->writePassword($_POST['password']);
+        $this->storage->setLastAction(\Oneall\SessionStorage::ACTION_REGISTER);
 
         return null;
     }
@@ -49,18 +50,27 @@ class ControllerModuleOneallssoRegister extends \Oneall\AbstractOneallSsoControl
      */
     public function postRegister()
     {
-        // if a user is logged
+        // if previous action is not "login", we skip
+        if (!$this->storage->isLastAction(\Oneall\SessionStorage::ACTION_REGISTER))
+        {
+            return null;
+        }
+
+        // if a user is not logged in, we skip
         if (!$this->customer instanceof \Cart\Customer || !$this->customer->getId())
         {
             return null;
         }
+
+        // reset previous action
+        $this->storage->setLastAction(null);
 
         //  we recreate user(and link)
         $this->synchronizer->push($this->customer, $this->storage->consumePassword());
 
         $this->startSession($this->customer->getId());
 
-        // loading identity data to check if we have something to addd or not
+        // loading identity data to check if we have something to add or not
         // getting current email list in order to know if we have to add
         $identityToken = $this->ssoDatabase->getIdentityToken($this->customer->getId());
         $response      = $this->api->getIdentity($identityToken);

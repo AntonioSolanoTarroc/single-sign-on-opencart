@@ -45,6 +45,7 @@ class SessionStorage
     const ACTION_LOGIN    = 'login';
     const ACTION_PASSWORD = 'password';
     const ACTION_ACCOUNT  = 'account';
+    const ACTION_REGISTER = 'register';
 
     /**
      *

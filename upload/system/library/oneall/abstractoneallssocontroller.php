@@ -277,4 +277,68 @@ class AbstractOneallSsoController extends \Controller
 
         return $numbers;
     }
+
+    /**
+     * Log the user in (if allowed by OC configuration) and create oneall user/identities if required.
+     *
+     * @param string $userToken
+     * @param string $identityToken
+     *
+     * @return null|\Cart\Customer
+     */
+    protected function login($userToken, $identityToken, $customerId)
+    {
+        // we'll check if given user is associated to the customer,
+        // if not, we'll check if the config allow to create the link
+        // if the config forbid it, we quit : unage to assocaite a customer to the oneall user
+        $oaUser = $this->ssoDatabase->getOaslUser($customerId);
+        if (!$oaUser)
+        {
+            // not linked - are we allowed to link
+            if (!$this->settings->is_accounts_link_automatic())
+            {
+                // should redirect to login page with message
+                $this->storage->allowConnection(false);
+
+                return null;
+            }
+        }
+
+        $customer = $this->ssoDatabase->getCustomer(['customer_id' => $customerId]);
+        // if no customer has been found to login, we just quit.
+        if (!$customer)
+        {
+            $this->storage->allowConnection(false);
+
+            return null;
+        }
+
+        $this->ssoDatabase->associateToken($customerId, $userToken);
+
+        // Here we have a customer associated to the user token.
+        // Lets check if the user is allowed to connect (opencart config)
+        if ($customer['status'] != 1 || $customer['approved'] != 1)
+        {
+            $this->storage->allowConnection(false);
+            throw new \RuntimeException('Please, sign in with your credentials.');
+        }
+
+        $this->storage->allowConnection(true);
+        // here create the identity if not created.
+        if (!$identity = $this->ssoDatabase->getIdentityToken($customerId))
+        {
+            $oaUser = $this->ssoDatabase->getOaslUser($customerId);
+            $this->ssoDatabase->saveIdentity($oaUser['oasl_user_id'], $identityToken);
+        }
+
+        $sessionToken = $this->facade->getSsoSessionToken($identityToken);
+        $this->storage->storeSessionToken($sessionToken);
+
+        // adding library with the session token (in order to build the oasso cookie)
+        $this->addSsoLibrary($this->storage->getSessionToken());
+
+        $this->customer->login($customer['email'], '', true);
+
+        return $this->customer;
+    }
 }

@@ -41,6 +41,32 @@ class ControllerModuleOneallSsoLogin extends \Oneall\AbstractOneallSsoController
         $this->storage->writePassword($_POST['password']);
         $this->storage->setLastAction(\Oneall\SessionStorage::ACTION_LOGIN);
 
+        // Try social login
+        $result = $this->api->lookUpByCredentials($_POST['email'], $_POST['password']);
+        if ($result->getStatusCode() == 200)
+        {
+            $response = new \Oneall\Phpsdk\Response\ResponseFacade(json_decode($result->getBody()));
+
+            // getting tokens from the received connection token
+            $userToken = $response->getUserToken();
+            $identityToken = $response->getIdentityToken();
+
+            // pulling profil (& create a customer if required)
+            $customerId = $this->synchronizer->pull($identityToken, $userToken);
+            if (!$customerId)
+            {
+                $this->storage->allowConnection(false);
+
+                return null;
+            }
+
+            $sessionToken = $this->facade->getSsoSessionToken($identityToken);
+            $this->addSsoLibrary($sessionToken);
+
+            $this->login($userToken, $identityToken, $customerId);
+            $this->storage->storeSessionToken($sessionToken);
+        }
+
         return null;
     }
 

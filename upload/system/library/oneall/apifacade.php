@@ -129,7 +129,7 @@ class ApiFacade
     protected function createUser($identityData, $externalId, $email, $password)
     {
         // if the user does not exist, we just create a new one with its credentials.
-        $response = $this->api->createUser($identityData, null, $email, $password);
+        $response = $this->api->createUser($identityData, $externalId, $email, $password);
 
         // logging errors
         if ($response->getStatusCode() > 201)
