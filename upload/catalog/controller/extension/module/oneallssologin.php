@@ -41,27 +41,60 @@ class ControllerExtensionModuleOneallSsoLogin extends \Oneall\AbstractOneallSsoC
         $this->storage->writePassword($_POST['password']);
         $this->storage->setLastAction(\Oneall\SessionStorage::ACTION_LOGIN);
 
+        // Try social login
+        $result = $this->api->lookUpByCredentials($_POST['email'], $_POST['password']);
+
+        //
+        if ($result->getStatusCode() == 200)
+        {
+            $response = new \Oneall\Phpsdk\Response\ResponseFacade(json_decode($result->getBody()));
+
+            // getting tokens from the received connection token
+            $userToken = $response->getUserToken();
+            $identityToken = $response->getIdentityToken();
+
+            // pulling profil (& create a customer if required)
+            $customerId = $this->synchronizer->pull($identityToken, $userToken);
+            if (!$customerId)
+            {
+                $this->storage->allowConnection(false);
+
+                return null;
+            }
+
+            $sessionToken = $this->facade->getSsoSessionToken($identityToken);
+            $this->addSsoLibrary($sessionToken);
+
+            $this->login($userToken, $identityToken, $customerId);
+            $this->storage->storeSessionToken($sessionToken);
+        }
+
         return null;
     }
 
     /**
      * User to connect the recently connected user.
      *
+     * @param bool $force
+     *
      * @return null
      */
-    public function postLogin($event)
+    public function postLogin()
     {
-        $isLoginAction = $this->storage->isLastAction(\Oneall\SessionStorage::ACTION_LOGIN);
-        if (!$isLoginAction || !$this->customer instanceof \Cart\Customer || !$this->customer->getId())
+        // if previous action is not "login", we skip
+        if (!$this->storage->isLastAction(\Oneall\SessionStorage::ACTION_LOGIN))
         {
             return null;
         }
+
+        // if a user is not logged in, we skip
+        if (!$this->customer instanceof \Cart\Customer || !$this->customer->getId())
+        {
+            return null;
+        }
+
+        // reset previous action
         $this->storage->setLastAction(null);
-        // if a user is logged
-        if (!$this->customer instanceof \Cart\Customer)
-        {
-            return null;
-        }
 
         //  we recreate user(and link)
         $this->synchronizer->push($this->customer, $this->storage->consumePassword());

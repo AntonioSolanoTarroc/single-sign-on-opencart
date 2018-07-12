@@ -132,7 +132,7 @@ class Synchronizer
     public function push(Customer $customer, $password = null)
     {
         $data = $this->exporter->exportCustomer($customer);
-        $userToken = $this->database->getIdentityToken($customer->getId());
+        $userToken = $this->database->getUserTokenFromId($customer->getId());
 
         // if no token in DB, we have a new customer, freshly registered.
         // we'll check if an account for its email has been created.
@@ -252,11 +252,11 @@ class Synchronizer
             switch ($number->type)
             {
                 case 'fax' :
-                    $this->fax = $number->value;
+                    $customer ['fax'] = $number->value;
                     break;
 
                 case 'home' :
-                    $this->telephone = $number->value;
+                    $customer ['telephone'] = $number->value;
                     break;
                 default :
                     if ($unknown === null)

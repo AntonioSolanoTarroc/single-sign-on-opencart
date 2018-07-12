@@ -86,30 +86,6 @@ class Sso
     }
 
     /**
-     * Return ata group id if set and if in config array, or return defualt group id.
-     *
-     * @param array $data
-     *
-     * @return int|mixed|null
-     */
-    private function getCustomerGroupId(array $data)
-    {
-        if (empty($data['customer_group_id']))
-        {
-            return $this->customerGroupId;
-        }
-
-        $id = (int) $data['customer_group_id'];
-
-        if (!in_array($id, $this->customerGroupDisplay))
-        {
-            return $this->customerGroupId;
-        }
-
-        return $id;
-    }
-
-    /**
      * Returns opencart customer id associated to OneAll user_token
      *
      * @param string $userToken
@@ -184,15 +160,14 @@ class Sso
      *
      * @return string|null null on error or not found
      */
-    public function getIdentityToken($customerId, $provider = 'storage')
+    public function getIdentityToken($customerId)
     {
-        if (empty($customerId) || empty($provider))
+        if (empty($customerId))
         {
             return null;
         }
 
         $customerId = $this->db->escape($customerId);
-        $provider   = $this->db->escape($provider);
 
         $query = 'SELECT ' .
                  '  i.identity_token, ' .
@@ -200,7 +175,7 @@ class Sso
                  '  u.customer_id ' .
                  'FROM `' . DB_PREFIX . 'oasl_user` u ' .
                  '  LEFT JOIN `' . DB_PREFIX . 'oasl_identity` i ON u.oasl_user_id = i.oasl_user_id ' .
-                 'WHERE u.customer_id = ' . $customerId . ' AND i.identity_provider = "' . $provider . '"';
+                 'WHERE u.customer_id = ' . $customerId . ' ';
 
         $results = $this->db->query($query);
         if (!$results->num_rows || empty($results->row['identity_token']))
@@ -376,8 +351,9 @@ class Sso
     public function getOaslUser($customerId)
     {
         $query = 'SELECT * ' .
-                 '  FROM ' . DB_PREFIX . 'oasl_user  ' .
-                 '  WHERE customer_id =' . $customerId;
+                 '  FROM ' . DB_PREFIX . 'oasl_user u ' .
+                 '  LEFT JOIN '.DB_PREFIX.'oasl_identity i ON i.oasl_user_id = u.oasl_user_id ' .
+                 '  WHERE u.customer_id =' . $customerId;
 
         $customer_query = $this->db->query($query);
         if (!$customer_query->num_rows)

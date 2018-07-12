@@ -66,12 +66,15 @@ class DataExporter
             $exportedAddresses [] = $this->exportAddress($address, $customer);
         }
 
+        $oa_user = $this->database->getOaslUser($customer->getId());
         $data = [
             "name" => [
                 "givenName" => $customer->getFirstName(),
                 "familyName" => $customer->getLastName()
             ],
-            "addresses" => $exportedAddresses
+            "addresses" => $exportedAddresses,
+            "provider" => $oa_user['identity_provider'],
+            "identity_token" => $oa_user['identity_token'],
         ];
 
         if ($customer->getEmail())
@@ -87,14 +90,6 @@ class DataExporter
             $data ['phoneNumbers'] [] = [
                 "value" => $customer->getTelephone(),
                 "type" => "home"
-            ];
-        }
-
-        if ($customer->getFax())
-        {
-            $data ['phoneNumbers'] [] = [
-                "value" => $customer->getFax(),
-                "type" => "fax"
             ];
         }
 
@@ -117,7 +112,6 @@ class DataExporter
             'firstName' => $address ['firstname'],
             'lastName' => $address ['lastname'],
             'phoneNumber' => $customer->getTelephone(),
-            'faxNumber' => $customer->getFax(),
             'streetAddress' => $address ['address_1'], // address 1
             'complement' => $address ['address_2'], // address 2
             'locality' => $address ['city'],
