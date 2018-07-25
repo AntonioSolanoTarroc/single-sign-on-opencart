@@ -1,4 +1,4 @@
-OneAll Single Sign-On OpenCart 3.0.0+
+OneAll Single Sign-On OpenCart 3.0.x
 ---------------------------------------------
 Single Sign-On for OpenCart is a professional extension that automatically 
 signs users in as they browse between multiple and independent OpenCart 
