@@ -4,7 +4,7 @@
 * **Single Sign-On for OpenCart 3.0+**
 
 
-# Single Sign-On 3.0.0 for OpenCart 3.0.x
+# Single Sign-On 3.1.0 for OpenCart 3.0.x
 
 Single Sign-On for OpenCart is a professional extension that automatically 
 signs users in as they browse between multiple and independent OpenCart 

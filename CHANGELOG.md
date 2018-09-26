@@ -6,6 +6,12 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [3.1.0] - 2018-09-26
+### Fixed
+* FSOCKOPEN
+* Module enable/disable
+* Settings handling
+* JavaScript cleanup
 
 ## [3.0.1] - 2018-07-12
 ### Added
