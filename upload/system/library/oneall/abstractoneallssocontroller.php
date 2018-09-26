@@ -93,11 +93,11 @@ class AbstractOneallSsoController extends \Controller
         $this->storage = new SessionStorage ($this->session);
 
         // Load Language
-        $this->load->language('extension/module/oneall');
+        $this->load->language('extension/module/oneallsso');
 
         // Load settings
         $this->load->model('setting/setting');
-        $this->settings = new sso_settings ($this->model_setting_setting->getSetting('oasso'));
+        $this->settings = new sso_settings ($this->model_setting_setting->getSetting('module_oneallsso'));
 
         // build client handler
         $client = $this->buildClient($this->settings);
@@ -120,8 +120,7 @@ class AbstractOneallSsoController extends \Controller
         // Delegate sql queries to ssoDatabase objects
         $this->ssoDatabase = new Sso ($this->db, $accountCustomer, $this->config);
         $this->exporter = new DataExporter ($this->ssoDatabase);
-        $this->synchronizer = new Synchronizer ($this->ssoDatabase, $this->api, $this->facade, $this->exporter,
-                                                $this->settings);
+        $this->synchronizer = new Synchronizer ($this->ssoDatabase, $this->api, $this->facade, $this->exporter, $this->settings);
 
         return true;
     }
@@ -135,9 +134,7 @@ class AbstractOneallSsoController extends \Controller
     private function buildClient(sso_settings $settings)
     {
         $builder = new Builder ();
-        $client = $builder->build($settings->get_handler(), $settings->get_api_subdomain(), $settings->get_public_key(),
-                                  $settings->get_private_key(), $settings->get_port() == 443,
-                                  'api.' . $settings->get_domain());
+        $client = $builder->build($settings->get_api_handler(), $settings->get_api_subdomain(), $settings->get_api_public_key(), $settings->get_api_private_key(), $settings->get_api_port() == 443, 'api.' . $settings->get_domain());
 
         return $client;
     }
@@ -158,7 +155,7 @@ class AbstractOneallSsoController extends \Controller
         $this->storage->storeSessionToken($sessionToken);
 
         // add js to create sso cookie.
-        $this->document->addScript('catalog/view/javascript/oneall/sso_start_session.js?sso_token=' . $identityToken);
+        $this->addSsoLibrary ($sessionToken);
     }
 
     /**
@@ -170,14 +167,19 @@ class AbstractOneallSsoController extends \Controller
     protected function addSsoLibrary($sessionToken = null)
     {
         $this->removeSsoLibrary();
-        $suffix = '';
-        if ($sessionToken)
+
+        // Do we have a token?
+        if (strlen(trim($sessionToken)) > 0)
         {
             $suffix = '?sso_session_token=' . $sessionToken;
         }
+        else
+        {
+            $suffix = '';
+        }
 
         // add js to create sso cookie.
-        $this->document->addScript('catalog/view/javascript/oneall/sso_library.js' . $suffix);
+        $this->document->addScript('catalog/view/javascript/oneall/sso.js' . $suffix);
 
         return null;
     }

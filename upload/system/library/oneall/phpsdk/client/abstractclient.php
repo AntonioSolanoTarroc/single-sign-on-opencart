@@ -23,57 +23,58 @@
  * http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
  *
  */
-
 namespace Oneall\Phpsdk\Client;
 
 abstract class AbstractClient implements ClientInterface
 {
     /**
+     * OneAll site, Subdomain
      *
      * @var string
      */
     protected $subDomain;
 
     /**
+     * OneAll site, Base domain.
      *
      * @var string
      */
     protected $baseDomain;
 
     /**
-     * timeout in seconds
+     * Connection timeout in seconds.
      *
      * @var int
      */
     protected $timeout = 30;
 
     /**
-     * Your site public key
+     * OneAll site, Public key
      *
      * @var string
      */
     protected $publicKey;
 
     /**
-     * Your site private key
+     * OneAll site, Private key.
      *
      * @var string
      */
     protected $privateKey;
 
     /**
-     * Using secure way to handle request (HTTPS, SSL, .
-     * ..) ?
+     * Use secure way to handle request? (HTTPS/SSL)
      *
      * @var boolean
      */
     protected $isSecure = true;
 
     /**
+     * User agent for HTTP connections.
      *
      * @var string
      */
-    protected $userAgent;
+    protected $userAgent = 'SingleSignOn/3.1.0 OpenCart/3.x (+http://www.oneall.com/)';
 
     /**
      * AbstractClient constructor.
@@ -81,15 +82,15 @@ abstract class AbstractClient implements ClientInterface
      * @param string $subDomain
      * @param string $sitePublicKey
      * @param string $sitePrivateKey
-     * @param bool   $isSecure
+     * @param bool $isSecure
      * @param string $base
      */
     public function __construct($subDomain, $sitePublicKey, $sitePrivateKey, $isSecure = true, $base = 'oneall.com')
     {
-        $this->subDomain  = $subDomain;
-        $this->publicKey  = $sitePublicKey;
+        $this->subDomain = $subDomain;
+        $this->publicKey = $sitePublicKey;
         $this->privateKey = $sitePrivateKey;
-        $this->isSecure   = $isSecure;
+        $this->isSecure = $isSecure;
         $this->baseDomain = $base;
     }
 
@@ -155,7 +156,6 @@ abstract class AbstractClient implements ClientInterface
     public function setTimeout($timeout)
     {
         $this->timeout = $timeout;
-
         return $this;
     }
 
@@ -166,6 +166,7 @@ abstract class AbstractClient implements ClientInterface
     public function getHost()
     {
         $scheme = '';
+
         if ($this->getScheme())
         {
             $scheme = $this->getScheme() . '://';
@@ -241,7 +242,7 @@ abstract class AbstractClient implements ClientInterface
     public function setUserAgent($userAgent)
     {
         $this->userAgent = $userAgent;
-
         return $this;
     }
+
 }

@@ -34,39 +34,37 @@ class ControllerExtensionModuleOneallSsoLogin extends \Oneall\AbstractOneallSsoC
      */
     public function preLogin()
     {
-        if (empty($_POST['email']) || empty($_POST['password']))
+        if ( ! empty($_POST['email']) && ! empty($_POST['password']))
         {
-            return null;
-        }
-        $this->storage->writePassword($_POST['password']);
-        $this->storage->setLastAction(\Oneall\SessionStorage::ACTION_LOGIN);
+            $this->storage->writePassword($_POST['password']);
+            $this->storage->setLastAction(\Oneall\SessionStorage::ACTION_LOGIN);
 
-        // Try social login
-        $result = $this->api->lookUpByCredentials($_POST['email'], $_POST['password']);
+            // Lookup the credentials in the cloud storage.
+            $result = $this->api->lookUpByCredentials($_POST['email'], $_POST['password']);
 
-        //
-        if ($result->getStatusCode() == 200)
-        {
-            $response = new \Oneall\Phpsdk\Response\ResponseFacade(json_decode($result->getBody()));
-
-            // getting tokens from the received connection token
-            $userToken = $response->getUserToken();
-            $identityToken = $response->getIdentityToken();
-
-            // pulling profil (& create a customer if required)
-            $customerId = $this->synchronizer->pull($identityToken, $userToken);
-            if (!$customerId)
+            // Credentials match.
+            if ($result->getStatusCode() == 200)
             {
-                $this->storage->allowConnection(false);
+                $response = new \Oneall\Phpsdk\Response\ResponseFacade(json_decode($result->getBody()));
 
-                return null;
+                // Extract tokens from the received connection token.
+                $userToken = $response->getUserToken();
+                $identityToken = $response->getIdentityToken();
+
+                // Pull profil (& create a customer if required)
+                $customerId = $this->synchronizer->pull($identityToken, $userToken);
+                if (!$customerId)
+                {
+                    $this->storage->allowConnection(false);
+                    return null;
+                }
+
+                $sessionToken = $this->facade->getSsoSessionToken($identityToken);
+                $this->addSsoLibrary($sessionToken);
+
+                $this->login($userToken, $identityToken, $customerId);
+                $this->storage->storeSessionToken($sessionToken);
             }
-
-            $sessionToken = $this->facade->getSsoSessionToken($identityToken);
-            $this->addSsoLibrary($sessionToken);
-
-            $this->login($userToken, $identityToken, $customerId);
-            $this->storage->storeSessionToken($sessionToken);
         }
 
         return null;

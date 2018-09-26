@@ -1,13 +1,33 @@
 @CHARSET "UTF-8";
 
-.oasso-container .row+.row {
+.oneallsso-container .row+.row {
     margin-top: 15px;
 }
 
-.oasso-container #oasso_connection_verify_result,
-.oasso-container #oasso_connection_autodetect_result{
-   font-size: 14px;
+.oneallsso-container .oneallsso_help{
+    font-size: 15px;
+    line-height: 22px;
+    color: #4c4d5a;
+    background: #f6f6f6;
+    padding: 10px;
+    border: 1px solid #eeeeee;
+    border-radius: 4px;
+}
+
+.oneallsso-container #oneallsso_connection_verify_result, 
+.oneallsso-container #oneallsso_connection_autodetect_result {
+    font-size: 14px;
     font-weight: bold;
     margin-bottom: 0;
-    padding: 9px 11px;
+    padding: 0 11px;
+    line-height: 34px;
+}
+
+.oneallsso-container .panel-title a{
+    color: #3b9b46;
+    text-decoration: underline;
+}
+
+.oneallsso-container .panel-title a:hover{
+    text-decoration: none;
 }

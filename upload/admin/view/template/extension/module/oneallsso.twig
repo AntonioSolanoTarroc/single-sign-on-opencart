@@ -1,172 +1,179 @@
 {{ header }}{{ column_left }}
-<div id="content" class="oasso-container">
-
-        <div class="page-header">
-            <div class="container-fluid">
-                <div class="pull-right">
-                    <button type="submit" form="form-module" data-toggle="tooltip" title="{{ button_save }}" class="btn btn-primary">
-                        <i class="fa fa-save"></i>
-                    </button>
-                    <a href="{{ cancel }}" data-toggle="tooltip" title="{{ button_cancel }}" class="btn btn-default">
-                        <i class="fa fa-reply"></i>
-                    </a>
-                </div>
-                <h1>{{ heading_title }}</h1>
-                <ul class="breadcrumb">
-                    {% for breadcrumb in breadcrumbs %}
-                        <li><a href="{{ breadcrumb.href }}">{{ breadcrumb.text }}</a></li>
-                    {% endfor %}
-                </ul>
-            </div>
-        </div>
-
+<div id="content" class="oneallsso-container">
+    <div class="page-header">
         <div class="container-fluid">
-            {% if error.error_warning %}
-                <div class="alert alert-danger alert-dismissible"><i
-                            class="fa fa-exclamation-circle"></i> {{ error.error_warning }}
-                    <button type="button" class="close" data-dismiss="alert">&times;</button>
-                </div>
-            {% endif %}
-
-            <form action="{{ action }}" id="form-module" method="post" enctype="multipart/form-data" class="form-horizontal">
-
+            <div class="pull-right">
+                <button type="submit" form="form-module" data-toggle="tooltip" title="{{ button_save }}" class="btn btn-primary">
+                    <i class="fa fa-save"></i>
+                </button>
+                <a href="{{ cancel }}" data-toggle="tooltip" title="{{ button_cancel }}" class="btn btn-default">
+                    <i class="fa fa-reply"></i>
+                </a>
+            </div>
+            <h1>{{ heading_title }}</h1>
+            <ul class="breadcrumb">
+                {% for breadcrumb in breadcrumbs %}
+                    <li><a href="{{ breadcrumb.href }}">{{ breadcrumb.text }}</a></li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+    <div class="container-fluid">
+         {% if oneallsso_error %}
+            <div class="alert alert-danger alert-dismissible">
+                <i class="fa fa-exclamation-circle"></i> {{ oneallsso_error }}
+                <button type="button" class="close" data-dismiss="alert">&times;</button>
+            </div>
+         {% endif %}
+        
+         {% if oneallsso_success %}
+            <div class="alert alert-success alert-dismissible">
+                <i class="fa fa-check-circle"></i> {{ oneallsso_success }}
+                <button type="button" class="close" data-dismiss="alert">×</button>
+            </div>
+         {% endif %}
+        
+        
+        <form action="{{ action }}" id="form-module" method="post" enctype="multipart/form-data" class="form-horizontal">
             <div class="panel panel-default">
                 <div class="panel-heading">
                     <h3 class="panel-title">
-                        <i class="fa fa-plug"></i> {{ oasso_api_connection_handle }}
+                        <i class="fa fa-puzzle-piece"></i> {{ oneallsso_plugin_status }}
+                    </h3>
+                </div>
+                <div class="panel-body">
+                    <div class="row">
+                        <div class="col-md-4 col-sm-12">                  
+                            <select id="oneallsso_status" name="module_oneallsso_status" class="form-control">
+                                <option{% if oneallsso_status != 1%} selected="selected"{% endif %} value="0">
+                                    {{ oneallsso_plugin_disabled }}
+                                </option>
+                                <option{% if oneallsso_status == 1%} selected="selected"{% endif %} value="1">
+                                    {{ oneallsso_plugin_enabled }}
+                                </option>                              
+                            </select>     
+                        </div>            
+                    </div>
+                </div>
+            </div>
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h3 class="panel-title">
+                        <i class="fa fa-plug"></i> {{ oneallsso_api_connection_settings }}
                     </h3>
                 </div>
                 <div class="panel-body">
                     <div class="row">
                         <div class="col-lg-12">
-                            <p>{{ oasso_port_field_details }}</p>
+                            <p class="oneallsso_help">{{ oneallsso_port_field_details }}</p>
                         </div>
                     </div>
                     <div class="row">
                         <div class="col-sm-6">
-                            <label class="control-label"
-                                   for="oasso_handler">{{ oasso_connection_handler_label }}</label>
-                            <select name="oasso_handler" id="oasso_handler" class="form-control">
-                                <option value="curl"{% if oasso_handler == 'curl' %} selected="selected"{% endif %}>
-                                    {{ oasso_connection_handled_option_curl }}
+                            <label class="control-label" for="oneallsso_api_handler">{{ oneallsso_api_handler_label }}</label>
+                            <select name="module_oneallsso_api_handler" id="oneallsso_api_handler" class="form-control">
+                                <option value="curl"{% if oneallsso_api_handler != 'fsockopen' %} selected="selected"{% endif %}>
+                                    {{ oneallsso_connection_handled_option_curl }}
                                 </option>
-
-                                <option value="fsockopen"{% if oasso_handler == 'fsockopen' %} selected="selected"{% endif %}>
-                                    {{ oasso_connection_handled_option_fsockopen }}
+                                <option value="fsockopen"{% if oneallsso_api_handler == 'fsockopen' %} selected="selected"{% endif %}>
+                                    {{ oneallsso_connection_handled_option_fsockopen }}
                                 </option>
                             </select>
                         </div>
-
-
                         <div class="col-sm-6">
-                            <label class="control-label"
-                                   for="oasso_port">{{ oasso_port_field_label }}</label>
-                            <select name="oasso_port" id="oasso_port" class="form-control">
-                                <option value="443" {% if oasso_port != 80 %} selected="selected"{% endif %}>
-                                    {{ oasso_port_field_443_label }}
+                            <label class="control-label" for="oneallsso_api_port">{{ oneallsso_api_port_label }}</label>
+                            <select name="module_oneallsso_api_port" id="oneallsso_api_port" class="form-control">
+                                <option value="443" {% if oneallsso_api_port != 80 %} selected="selected"{% endif %}>
+                                    {{ oneallsso_api_port_443_label }}
                                 </option>
-                                <option value="80" {% if oasso_port == 80 %} selected="selected"{% endif %}>
-                                    {{ oasso_port_field_80_label }}
+                                <option value="80" {% if oneallsso_api_port == 80 %} selected="selected"{% endif %}>
+                                    {{ oneallsso_api_port_80_label }}
                                 </option>
                             </select>
                         </div>
                     </div>
                     <div class="row">
                         <div class="col-md-4 col-lg-2">
-                            <input id="oasso_connection_autodetect" name="oasso_connection_autodetect"
-                                   value="{{ oasso_autodetect_api_connection }}" type="button"
-                                   class="btn btn-block btn-md btn-info"/>
+                            <input id="oneallsso_connection_autodetect" name="module_oneallsso_connection_autodetect" value="{{ oneallsso_autodetect_api_connection }}" type="button" class="btn btn-block btn-md btn-info" />
                         </div>
                         <div class="col-md-8 col-lg-10">
-                            <div id="oasso_connection_autodetect_result"></div>
+                            <div id="oneallsso_connection_autodetect_result"></div>
                         </div>
                     </div>
                 </div>
             </div>
-
             <div class="panel panel-default">
                 <div class="panel-heading">
                     <h3 class="panel-title">
-                        <i class="fa fa-cog"></i> {{ oasso_api_settings_title }}
+                        <i class="fa fa-cog"></i> {{ oneallsso_api_settings_title }} &middot; <a href="https://app.oneall.com" target="_blank">{{ oneallsso_my_account }}</a>
                     </h3>
                 </div>
                 <div class="panel-body">
                     <div class="row">
                         <div class="col-lg-12">
-                            <p>{{ oasso_api_settings_intro }}</p>
+                            <p class="oneallsso_help">{{ oneallsso_api_settings_intro }}</p>
                         </div>
                     </div>
                     <div class="row">
                         <div class="col-sm-4">
-                            <label class="control-label" for="oasso_api_subdomain">
-                                {{ oasso_api_subdomain_label }}
-                            </label>
-                            <input name="oasso_api_subdomain" value="{{ oasso_api_subdomain }}"
-                                   id="oasso_api_subdomain" class="form-control" type="text"/>
+                            <label class="control-label" for="oneallsso_api_subdomain">{{ oneallsso_api_subdomain_label }}</label>
+                            <input name="module_oneallsso_api_subdomain" value="{{ oneallsso_api_subdomain }}" id="oneallsso_api_subdomain" class="form-control" type="text" />
                         </div>
                         <div class="col-sm-4">
-                            <label class="control-label" for="oasso_public_key">
-                                {{ oasso_api_public_key }}
-                            </label>
-                            <input name="oasso_public_key" value="{{ oasso_public_key }}"
-                                   id="oasso_public_key" class="form-control" type="text"/>
+                            <label class="control-label" for="oneallsso_api_public_key">{{ oneallsso_api_public_key_label }}</label>
+                            <input name="module_oneallsso_api_public_key" value="{{ oneallsso_api_public_key }}" id="oneallsso_api_public_key" class="form-control" type="text" />
                         </div>
                         <div class="col-sm-4">
-                            <label class="control-label" for="oasso_private_key">
-                                {{ oasso_api_private_key }}
-                            </label>
-                            <input name="oasso_private_key" value="{{ oasso_private_key }}"
-                                   id="oasso_private_key" class="form-control" type="text">
+                            <label class="control-label" for="oneallsso_api_private_key">{{ oneallsso_api_private_key_label }}</label>
+                            <input name="module_oneallsso_api_private_key" value="{{ oneallsso_api_private_key }}" id="oneallsso_api_private_key" class="form-control" type="text" />
                         </div>
                     </div>
                     <div class="row">
                         <div class="col-lg-2 col-md-4 ">
-                            <input id="oasso_connection_verify" type="button" class="btn btn-block btn-md btn-info"
-                                   value="{{ oasso_verify_api_settings }}" name="oasso_connection_verify"/>
+                            <input id="oneallsso_connection_verify" type="button" class="btn btn-block btn-md btn-info" value="{{ oneallsso_verify_api_settings }}" name="oneallsso_connection_verify" />
                         </div>
                         <div class="col-lg-10 col-md-4 ">
-                            <div id="oasso_connection_verify_result"></div>
+                            <div id="oneallsso_connection_verify_result"></div>
                         </div>
                     </div>
                 </div>
             </div>
-
             <div class="panel panel-default">
                 <div class="panel-heading">
-                    <h3 class="panel-title"><i class="fa fa-user"></i> {{ oasso_account_creation_title }}</h3>
+                    <h3 class="panel-title"><i class="fa fa-user"></i> {{ oneallsso_account_creation_title }}</h3>
                 </div>
                 <div class="panel-body">
                     <div class="row">
                         <div class="col-lg-12">
-                            <p>{{ oasso_account_creation_intro }}</p>
+                            <p class="oneallsso_help">{{ oneallsso_account_creation_intro }}</p>
                         </div>
                     </div>
                     <div class="row">
                         <div class="col-sm-6">
-                            <label class="control-label" for="oasso_accounts_create_auto">
-                                {{ oasso_account_creation_auto_label }}
+                            <label class="control-label" for="oneallsso_accounts_create_auto">
+                                {{ oneallsso_account_creation_auto_label }}
                             </label>
-                            <select id="oasso_accounts_create_auto" name="oasso_accounts_create_auto"
+                            <select id="oneallsso_accounts_create_auto" name="module_oneallsso_accounts_create_auto"
                                     class="form-control">
-                                <option {% if 1 == oasso_accounts_create_auto %} selected{% endif %} value="1">
-                                    {{ oasso_account_creation_auto_option_yes }}
+                                <option {% if 1 == oneallsso_accounts_create_auto %} selected{% endif %} value="1">
+                                    {{ oneallsso_account_creation_auto_option_yes }}
                                 </option>
-                                <option {% if 0 == oasso_accounts_create_auto %} selected{% endif %} value="0">
-                                    {{ oasso_account_creation_auto_option_no }}
+                                <option {% if 0 == oneallsso_accounts_create_auto %} selected{% endif %} value="0">
+                                    {{ oneallsso_account_creation_auto_option_no }}
                                 </option>
                             </select>
                         </div>
                         <div class="col-sm-6">
-                            <label class="control-label" for="oasso_accounts_create_sendmail">
-                                {{ oasso_account_creation_mail_label }}
+                            <label class="control-label" for="oneallsso_accounts_create_sendmail">
+                                {{ oneallsso_account_creation_mail_label }}
                             </label>
-                            <select id="oasso_accounts_create_sendmail" name="oasso_accounts_create_sendmail"
+                            <select id="oneallsso_accounts_create_sendmail" name="module_oneallsso_accounts_create_sendmail"
                                     class="form-control">
-                                <option {% if 1 == oasso_accounts_create_sendmail %} selected{% endif %} value="1">
-                                    {{ oasso_account_creation_mail_label_yes }}
+                                <option {% if 1 == oneallsso_accounts_create_sendmail %} selected{% endif %} value="1">
+                                    {{ oneallsso_account_creation_mail_label_yes }}
                                 </option>
-                                <option {% if 0 == oasso_accounts_create_sendmail %} selected{% endif %} value="0">
-                                    {{ oasso_account_creation_mail_label_no }}
+                                <option {% if 0 == oneallsso_accounts_create_sendmail %} selected{% endif %} value="0">
+                                    {{ oneallsso_account_creation_mail_label_no }}
                                 </option>
                             </select>
                         </div>
@@ -175,134 +182,130 @@
                     </div>
                 </div>
             </div>
-
             <div class="panel panel-default">
                 <div class="panel-heading">
                     <h3 class="panel-title">
-                        <i class="fa fa-users"></i> {{ oasso_account_link_title }}
+                        <i class="fa fa-users"></i> {{ oneallsso_account_link_title }}
                     </h3>
                 </div>
                 <div class="panel-body">
                     <div class="row">
                         <div class="col-lg-12">
-                            <p>{{ oasso_account_link_intro1 }}</p>
-                            <p>{{ oasso_account_link_intro2 }}</p>
+                            <p class="oneallsso_help">{{ oneallsso_account_link_intro1 }} {{ oneallsso_account_link_intro2 }}</p>
                         </div>
                     </div>
                     <div class="row">
                         <div class="col-sm-6">
-                            <label class="control-label" for="oasso_accounts_link_automatic">
-                                {{ oasso_account_link_label }}
+                            <label class="control-label" for="oneallsso_accounts_link_automatic">
+                                {{ oneallsso_account_link_label }}
                             </label>
-                            <select id="oasso_accounts_link_automatic" name="oasso_accounts_link_automatic"
+                            <select id="oneallsso_accounts_link_automatic" name="module_oneallsso_accounts_link_automatic"
                                     class="form-control">
-                                <option {% if 1 == oasso_accounts_link_automatic %} selected{% endif %} value="1">
-                                    {{ oasso_account_link_yes }}
+                                <option {% if 1 == oneallsso_accounts_link_automatic %} selected{% endif %} value="1">
+                                    {{ oneallsso_account_link_yes }}
                                 </option>
-                                <option {% if 0 == oasso_accounts_link_automatic %} selected{% endif %} value="0">
-                                    {{ oasso_account_link_no }}
+                                <option {% if 0 == oneallsso_accounts_link_automatic %} selected{% endif %} value="0">
+                                    {{ oneallsso_account_link_no }}
                                 </option>
                             </select>
                         </div>
                         <div class="col-sm-6">
-                            <label class="control-label" for="oasso_accounts_link_unverified">
-                                {{ oasso_account_link_unverified_label }}
+                            <label class="control-label" for="oneallsso_accounts_link_unverified">
+                                {{ oneallsso_account_link_unverified_label }}
                             </label>
-                            <select id="oasso_accounts_link_unverified" name="oasso_accounts_link_unverified"
+                            <select id="oneallsso_accounts_link_unverified" name="module_oneallsso_accounts_link_unverified"
                                     class="form-control">
-                                <option value="1" {% if 1 == oasso_accounts_link_unverified %} selected{% endif %}>
-                                    {{ oasso_account_link_unverified_yes }}
+                                <option value="1" {% if 1 == oneallsso_accounts_link_unverified %} selected{% endif %}>
+                                    {{ oneallsso_account_link_unverified_yes }}
                                 </option>
-                                <option value="0" {% if 0 == oasso_accounts_link_unverified %} selected{% endif %}>
-                                    {{ oasso_account_link_unverified_no }}
+                                <option value="0" {% if 0 == oneallsso_accounts_link_unverified %} selected{% endif %}>
+                                    {{ oneallsso_account_link_unverified_no }}
                                 </option>
                             </select>
-                            <p class="help-block">{{ oasso_account_link_unverified_help }}</p>
+                            <p class="help-block">{{ oneallsso_account_link_unverified_help }}</p>
                         </div>
                     </div>
                 </div>
             </div>
-
             <div class="panel panel-default">
                 <div class="panel-heading">
                     <h3 class="panel-title">
-                        <i class="fa fa-cog"></i> {{ oasso_session_title }}
+                        <i class="fa fa-cog"></i> {{ oneallsso_session_title }}
                     </h3>
                 </div>
                 <div class="panel-body">
                     <div class="row">
                         <div class="col-md-4 col-sm-12">
-                            <label class="control-label" for="oasso_session_lifetime">
-                                {{ oasso_session_lifetime_label }}
+                            <label class="control-label" for="oneallsso_session_lifetime">
+                                {{ oneallsso_session_lifetime_label }}
                             </label>
-                            <select id="oasso_session_lifetime" name="oasso_session_lifetime" class="form-control">
-                                <option {% if 7200 == oasso_session_lifetime %} selected{% endif %}value="7200">
-                                    {{ oasso_session_lifetime_2_Hours }}
+                            <select id="oneallsso_session_lifetime" name="module_oneallsso_session_lifetime" class="form-control">
+                                <option {% if 7200 == oneallsso_session_lifetime %} selected{% endif %}value="7200">
+                                    {{ oneallsso_session_lifetime_2_Hours }}
                                 </option>
-                                <option {% if 14400 == oasso_session_lifetime %} selected{% endif %} value="14400">
-                                    {{ oasso_session_lifetime_4_Hours }}
+                                <option {% if 14400 == oneallsso_session_lifetime %} selected{% endif %} value="14400">
+                                    {{ oneallsso_session_lifetime_4_Hours }}
                                 </option>
-                                <option {% if 21600 == oasso_session_lifetime %} selected{% endif %} value="21600">
-                                    {{ oasso_session_lifetime_6_Hours }}
+                                <option {% if 21600 == oneallsso_session_lifetime %} selected{% endif %} value="21600">
+                                    {{ oneallsso_session_lifetime_6_Hours }}
                                 </option>
-                                <option {% if 43200 == oasso_session_lifetime %} selected{% endif %} value="43200">
-                                    {{ oasso_session_lifetime_12_Hours }}
+                                <option {% if 43200 == oneallsso_session_lifetime %} selected{% endif %} value="43200">
+                                    {{ oneallsso_session_lifetime_12_Hours }}
                                 </option>
-                                <option {% if 86400 == oasso_session_lifetime %} selected{% endif %} value="86400">
-                                    {{ oasso_session_lifetime_1_Day }}
+                                <option {% if 86400 == oneallsso_session_lifetime %} selected{% endif %} value="86400">
+                                    {{ oneallsso_session_lifetime_1_Day }}
                                 </option>
-                                <option {% if 172800 == oasso_session_lifetime %}selected {% endif %} value="172800">
-                                    {{ oasso_session_lifetime_2_Days }}
+                                <option {% if 172800 == oneallsso_session_lifetime %}selected {% endif %} value="172800">
+                                    {{ oneallsso_session_lifetime_2_Days }}
                                 </option>
-                                <option {% if 259200 ==  oasso_session_lifetime %}selected {% endif %} value="259200">
-                                    {{ oasso_session_lifetime_3_Days }}
+                                <option {% if 259200 ==  oneallsso_session_lifetime %}selected {% endif %} value="259200">
+                                    {{ oneallsso_session_lifetime_3_Days }}
                                 </option>
-                                <option {% if 345600 ==  oasso_session_lifetime %}selected {% endif %} value="345600">
-                                    {{ oasso_session_lifetime_4_Days }}
+                                <option {% if 345600 ==  oneallsso_session_lifetime %}selected {% endif %} value="345600">
+                                    {{ oneallsso_session_lifetime_4_Days }}
                                 </option>
-                                <option {% if 432000 ==  oasso_session_lifetime %}selected {% endif %} value="432000">
-                                    {{ oasso_session_lifetime_5_Days }}
+                                <option {% if 432000 ==  oneallsso_session_lifetime %}selected {% endif %} value="432000">
+                                    {{ oneallsso_session_lifetime_5_Days }}
                                 </option>
-                                <option {% if 518400 ==  oasso_session_lifetime %}selected {% endif %} value="518400">
-                                    {{ oasso_session_lifetime_6_Days }}
+                                <option {% if 518400 ==  oneallsso_session_lifetime %}selected {% endif %} value="518400">
+                                    {{ oneallsso_session_lifetime_6_Days }}
                                 </option>
-                                <option {% if 604800 ==  oasso_session_lifetime %}selected {% endif %} value="604800">
-                                    {{ oasso_session_lifetime_1_Week }}
+                                <option {% if 604800 ==  oneallsso_session_lifetime %}selected {% endif %} value="604800">
+                                    {{ oneallsso_session_lifetime_1_Week }}
                                 </option>
-                                <option {% if 1209600 == oasso_session_lifetime %} selected{% endif %} value="1209600">
-                                    {{ oasso_session_lifetime_2_Weeks }}
+                                <option {% if 1209600 == oneallsso_session_lifetime %} selected{% endif %} value="1209600">
+                                    {{ oneallsso_session_lifetime_2_Weeks }}
                                 </option>
-                                <option {% if 1814400 == oasso_session_lifetime %} selected{% endif %} value="1814400">
-                                    {{ oasso_session_lifetime_3_Weeks }}
+                                <option {% if 1814400 == oneallsso_session_lifetime %} selected{% endif %} value="1814400">
+                                    {{ oneallsso_session_lifetime_3_Weeks }}
                                 </option>
-                                <option {% if 2419200 == oasso_session_lifetime %} selected{% endif %} value="2419200">
-                                    {{ oasso_session_lifetime_1_Month }}
+                                <option {% if 2419200 == oneallsso_session_lifetime %} selected{% endif %} value="2419200">
+                                    {{ oneallsso_session_lifetime_1_Month }}
                                 </option>
                             </select>
-                            <p class="help-block">{{ oasso_session_lifetime_help }}</p>
+                            <p class="help-block">{{ oneallsso_session_lifetime_help }}</p>
                         </div>
                         <div class="col-md-4 col-sm-12">
-                            <label class="control-label" for="oasso_session_realm">
-                                {{ oasso_session_realm_label }}
+                            <label class="control-label" for="oneallsso_session_realm">
+                                {{ oneallsso_session_realm_label }}
                             </label>
-                            <input name="oasso_session_realm" value="{{ oasso_session_realm }}" id="oasso_session_realm"
+                            <input name="module_oneallsso_session_realm" value="{{ oneallsso_session_realm }}" id="oneallsso_session_realm"
                                    class="form-control" type="text">
-                            <p class="help-block">{{ oasso_session_realm_help }}</p>
+                            <p class="help-block">{{ oneallsso_session_realm_help }}</p>
                         </div>
                         <div class="col-md-4 col-sm-12">
-                            <label class="control-label" for="oasso_session_subrealm">
-                                {{ oasso_session_subrealm_label }}
+                            <label class="control-label" for="oneallsso_session_subrealm">
+                                {{ oneallsso_session_subrealm_label }}
                             </label>
-                            <input name="oasso_session_subrealm" value="{{ oasso_session_subrealm }}"
-                                   id="oasso_session_subrealm" class="form-control" type="text">
-                            <p class="help-block">{{ oasso_session_subrealm_help }}</p>
+                            <input name="module_oneallsso_session_subrealm" value="{{ oneallsso_session_subrealm }}"
+                                   id="oneallsso_session_subrealm" class="form-control" type="text">
+                            <p class="help-block">{{ oneallsso_session_subrealm_help }}</p>
                         </div>
                     </div>
                 </div>
             </div>
-
-    </form>
-        </div>
-
+        </form>
+    </div>
 </div>
+
 {{ footer }}

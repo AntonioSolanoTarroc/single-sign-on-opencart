@@ -104,12 +104,7 @@ class FSockOpen extends AbstractClient
 	 */
 	protected function getPort ()
 	{
-		if ($this->isSecure ())
-		{
-			return 443;
-		}
-
-		return 80;
+		return ($this->isSecure () ? 443: 80);
 	}
 
 	/**
@@ -119,9 +114,13 @@ class FSockOpen extends AbstractClient
 	 *
 	 * @return mixed
 	 */
-	protected function request ($path, $method, $data = null)
+	protected function request ($path, $method, $data = null, $options = array ())
 	{
-		$errno = $errstr = null;
+	    // Encode.
+		if (is_array ($data))
+		{
+		    $data = @json_encode ($data);
+		}
 
 		// Create socket
 		if (!$socket = fsockopen ($this->getHost (), $this->getPort (), $errno, $errstr, $this->getTimeout ()))
@@ -129,71 +128,59 @@ class FSockOpen extends AbstractClient
 			throw new \RuntimeException ('Error while opening fsokopen : [' . $errno . ']' . trim ($errstr));
 		}
 
-		if ($data)
-		{
-			$data = json_encode ($data);
-		}
-
 		// / Build request
-		$parts = array ();
+		$headers = array ();
 
-		// Method
-		$parts['method'] = strtoupper ($method) . " " . $path . " HTTP/1.1";
+		// Method.
+		$headers[] = strtoupper ($method) . " " . $path . " HTTP/1.1";
 
-		// Host
-		$parts['host'] = "Host: " . $this->getHost ();
+		// Host.
+		$headers[] = "Host: " . $this->getDomain();
 
-		// Authorization
-		$authorization = $this->getAutorization ();
-		if ( ! empty ($authorization))
+		// Authorization.
+		$headers[] = "Authorization: Basic " . $this->getAutorization ();
+
+		// User Agent.
+		$headers[] = "User-Agent: " . $this->getUserAgent ();
+
+		// Post data.
+		if (!empty($data))
 		{
-			$parts['authorization'] = "Authorization: Basic " . $authorization;
+		    $headers[] = "Content-Length: " . strlen ($data);
 		}
 
-		// Agent
-		$userAgent = $this->getUserAgent ();
-		if ( ! empty ($userAgent))
+		// Close connection.
+		$headers[] = "Connection: close";
+
+		// Send request.
+		fwrite ($socket, implode ($headers,"\r\n")."\r\n\r\n");
+
+
+		// Send data.
+		if (!empty($data))
 		{
-			$parts['user-agent'] = "User-Agent: " . $authorization;
+		    fwrite($socket, $data);
 		}
-
-		// Add POST data ?
-		if ( ! empty ($data))
-		{
-			$parts['content-length'] = "Content-length: " . strlen ($data);
-		}
-
-
-		// Add POST data ?
-		if ( ! empty ($data))
-		{
-			$parts['data'] = $data;
-		}
-
-		print_r(implode ($parts,"||"));
-		// Fwrite
-		fwrite ($socket, implode ($parts,"\r\n")."\r\n\r\n");
 
 		// Fetch response
-		$rawResponse = '';
+		$response = '';
 		while ( !feof ($socket) )
 		{
-			$rawResponse .= fread ($socket, 1024);
+			$response .= fread ($socket, 1024);
 		}
-		print_r($rawResponse);
+
 		// Close connection
 		fclose ($socket);
 
 		// Parse response
-		list ($responseHeader, $responseBody) = explode ("\r\n\r\n", $rawResponse, 2);
+		list ($response_header, $response_body) = explode ("\r\n\r\n", $response, 2);
 
 		// Parse header
-		$responseHeader = preg_split ("/\r\n|\n|\r/", $responseHeader);
-		list ($headerProtocol, $headerCode, $headerStatusMessage) = explode (' ', trim (array_shift ($responseHeader)), 3);
+		$response_header = preg_split ("/\r\n|\n|\r/", $response_header);
+		list ($header_protocol, $header_code, $header_status_message) = explode (' ', trim (array_shift ($response_header)), 3);
 
-		$response = new Response ($headerCode, $responseHeader, $responseBody, $headerProtocol, $headerStatusMessage);
-
-		return $response;
+		// Build response
+		return new Response ($header_code, $response_header, $response_body, $header_protocol, $header_status_message);
 	}
 
 	/**

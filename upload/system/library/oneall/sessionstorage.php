@@ -117,6 +117,14 @@ class SessionStorage
     /**
      * @param boolean $action
      */
+    public function unsetLastAction()
+    {
+        $this->write(self::LAST_ACTION, null);
+    }
+
+    /**
+     * @param boolean $action
+     */
     public function setLastAction($action)
     {
         $this->write(self::LAST_ACTION, $action);

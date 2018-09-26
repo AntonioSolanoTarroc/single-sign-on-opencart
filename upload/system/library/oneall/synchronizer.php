@@ -23,7 +23,6 @@
  * http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
  *
  */
-
 namespace Oneall;
 
 use Cart\Customer;
@@ -34,7 +33,6 @@ use Oneall\Phpsdk\Response\ResponseFacade;
 
 /**
  * Class Synchronizer
- *
  * Use to synchronize data between OC customer & OA user
  *
  * @package Oneall
@@ -68,16 +66,11 @@ class Synchronizer
     /**
      * Synchronizer constructor.
      *
-     * @param Sso                      $database
+     * @param Sso $database
      * @param \Oneall\Phpsdk\OneallApi $api
      */
-    public function __construct(
-        Sso $database,
-        OneallApi $api,
-        ApiFacade $apiFacade,
-        DataExporter $exporter,
-        sso_settings $settings
-    ) {
+    public function __construct(Sso $database, OneallApi $api, ApiFacade $apiFacade, DataExporter $exporter, sso_settings $settings)
+    {
         $this->database = $database;
         $this->api = $api;
         $this->apiFacade = $apiFacade;
@@ -87,7 +80,6 @@ class Synchronizer
 
     /**
      * We pull whole user profile associated to the userToken and identityToken.
-     *
      * Also create the OpenCart customer account if required.
      *
      * @param string $identityToken
@@ -112,13 +104,11 @@ class Synchronizer
         }
 
         $rawResponse = $this->api->getIdentity($identityToken);
-        $identityResponse = new IdentityFacade (json_decode($rawResponse->getBody()));
+        $identityResponse = new IdentityFacade(json_decode($rawResponse->getBody()));
 
         $customer = $this->mergeCustomerData($customer, $identityResponse);
 
-
-
-        $customerId = $this->database->saveCustomer($customer, $_SERVER ['REMOTE_ADDR']);
+        $customerId = $this->database->saveCustomer($customer, $_SERVER['REMOTE_ADDR']);
 
         $this->pullAddresses((array) $identityResponse->getAddresses(), $customerId);
 
@@ -128,7 +118,7 @@ class Synchronizer
     /**
      *
      * @param \Cart\Customer $customer
-     * @param null           $password
+     * @param null $password
      *
      * @return null
      */
@@ -142,18 +132,22 @@ class Synchronizer
         if (!$userToken)
         {
             $response = $this->api->lookUpByCredentials($customer->getEmail());
-            $userResponse = new ResponseFacade (json_decode($response->getBody()));
+            $userResponse = new ResponseFacade(json_decode($response->getBody()));
             $userToken = $userResponse->getUserToken();
-            unset ($response);
+            unset($response);
         }
 
-        $response = $this->apiFacade->pushUser($data, $userToken, $customer->getEmail(), $password, $customer->getId());
+        // Build the externalid.
+        $externalid = $this->settings->get_uniqid().'-'.$customer->getId();
+
+        // Push the user to the cloud storage.
+        $response = $this->apiFacade->pushUser($data, $userToken, $customer->getEmail(), $password, $externalid);
         if (!$response)
         {
             return null;
         }
 
-        $responseFacade = new \Oneall\Phpsdk\Response\ResponseFacade ($response);
+        $responseFacade = new \Oneall\Phpsdk\Response\ResponseFacade($response);
 
         // link customer to the user/identity token if the customer is already created.
         $userToken = $responseFacade->getUserToken();
@@ -166,7 +160,7 @@ class Synchronizer
 
     /**
      *
-     * @param array    $profileAddresses
+     * @param array $profileAddresses
      * @param int|null $customerId
      *
      * @return array
@@ -192,7 +186,7 @@ class Synchronizer
         // we will import all profile address
         // importation case 0 <- *
         // importation case 1 <- 1
-        while (!empty ($profileAddresses))
+        while ( !empty($profileAddresses) )
         {
             $customerAddress = array_pop($customerAddresses);
             // if there is no more customer addess, we create an empty one
@@ -214,11 +208,8 @@ class Synchronizer
 
     /**
      *
-     * @param
-     *            $userToken
-     * @param
-     *            $userEmail
-     *
+     * @param $userToken
+     * @param $userEmail
      * @return array|null
      */
     protected function identifyCustomer($userToken, $userEmail)
@@ -234,16 +225,16 @@ class Synchronizer
 
     /**
      *
-     * @param array          $customer
+     * @param array $customer
      * @param IdentityFacade $identity
      *
      * @return array
      */
     protected function mergeCustomerData(array $customer, IdentityFacade $identity)
     {
-        $customer ['firstname'] = $identity->getFirstname();
-        $customer ['lastname'] = $identity->getLastname();
-        $customer ['email'] = $identity->getFirstEmail();
+        $customer['firstname'] = $identity->getFirstname();
+        $customer['lastname'] = $identity->getLastname();
+        $customer['email'] = $identity->getFirstEmail();
 
         $numbers = $identity->getPhoneNumbers();
         $unknown = null;
@@ -253,12 +244,12 @@ class Synchronizer
             switch ($number->type)
             {
                 case 'fax' :
-                    $customer ['fax'] = $number->value;
-                    break;
+                    $customer['fax'] = $number->value;
+                break;
 
                 case 'home' :
-                    $customer ['telephone'] = $number->value;
-                    break;
+                    $customer['telephone'] = $number->value;
+                break;
                 default :
                     if ($unknown === null)
                     {
@@ -294,12 +285,12 @@ class Synchronizer
 
         // first ensure all
         $opencartAddress = array_merge($structure, $opencartAddress);
-        if (!empty ($profileAddress['code']))
+        if (!empty($profileAddress['code']))
         {
             $countryId = $this->database->getCountryId($profileAddress['code']);
             $opencartAddress['country_id'] = $countryId;
 
-            if (!empty ($profileAddress['region']) && $countryId)
+            if (!empty($profileAddress['region']) && $countryId)
             {
                 $regionId = $this->database->getRegionId($profileAddress['region'], $countryId);
                 $opencartAddress['zone_id'] = $regionId;
@@ -316,4 +307,5 @@ class Synchronizer
 
         return $opencartAddress;
     }
+
 }

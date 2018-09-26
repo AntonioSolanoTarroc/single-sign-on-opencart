@@ -64,77 +64,88 @@ class ControllerExtensionModuleOneallssoUpdate extends \Oneall\AbstractOneallSso
     }
 
     /**
-     * We'll also  create start
+     * catalog/controller/account/password/before
      *
      * @return null
      */
     public function prePasswordUpdate()
     {
-        if (empty($_POST))
+        // Password form submitted.
+        if (isset ($_POST) && is_array ($_POST))
         {
-            return null;
+            // Both fields filled out.
+            if (! empty ($_POST['password']) && ! empty ($_POST['confirm']))
+            {
+                // Both fields identical.
+                if ($_POST['password'] == $_POST['confirm'])
+                {
+                    $this->storage->writePassword($_POST['password']);
+                    $this->storage->setLastAction(\Oneall\SessionStorage::ACTION_PASSWORD);
+                }
+            }
         }
-
-        $this->storage->writePassword($_POST['password']);
-        $this->storage->setLastAction(\Oneall\SessionStorage::ACTION_PASSWORD);
 
         return null;
     }
 
+
     /**
-     * We'll also  create start
+     * catalog/controller/account/account/after
      *
      * @return null
      */
     public function postPasswordUpdate()
     {
-        // if previous action is not "update password", we skip
-        if (!$this->storage->isLastAction(\Oneall\SessionStorage::ACTION_PASSWORD))
+        // The action is set by prePasswordUpdate.
+        if ($this->storage->isLastAction(\Oneall\SessionStorage::ACTION_PASSWORD))
         {
-            return null;
+            // Customer must be logged in.
+            if ($this->customer instanceof \Cart\Customer)
+            {
+                // Read identifier.
+                $customer_id = $this->customer->getId();
+
+                // Make sure we have one.
+                if ( ! empty ($customer_id))
+                {
+                    // Reset previous action.
+                    $this->storage->unsetLastAction();
+
+                    // Read the user_token.
+                    $userToken = $this->ssoDatabase->getUserTokenFromId($customer_id);
+
+                    // Update password.
+                    $this->api->updateUser($userToken, null, null, $this->storage->consumePassword());
+                }
+            }
         }
-
-        // if a user is not logged in
-        if (!$this->customer instanceof \Cart\Customer || !$this->customer->getId())
-        {
-            return null;
-        }
-
-        // reset previous action
-        $this->storage->setLastAction(null);
-
-        $userToken = $this->ssoDatabase->getUserTokenFromId($this->customer->getId());
-
-        $this->api->updateUser($userToken, null, null, $this->storage->consumePassword());
 
         return null;
     }
 
     /**
-     * We'll also  create start
+     * catalog/controller/account/edit/before
      *
      * @return null
      */
     public function preUpdate()
     {
-        if (empty($_POST))
+        if (isset($_POST) && is_array ($_POST))
         {
-            return null;
+            $this->storage->setLastAction(\Oneall\SessionStorage::ACTION_ACCOUNT);
         }
-
-        $this->storage->setLastAction(\Oneall\SessionStorage::ACTION_ACCOUNT);
 
         return null;
     }
 
     /**
-     * We'll also  create start
+     * catalog/controller/account/account/before
      *
      * @return null
      */
     public function postUpdate()
     {
-        // if previous action is not "update password", we skip
+        // The action is set in preUpdate.
         if (!$this->storage->isLastAction(\Oneall\SessionStorage::ACTION_ACCOUNT))
         {
             return null;

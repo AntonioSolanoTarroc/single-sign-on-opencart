@@ -1,26 +1,21 @@
 jQuery(document).ready(function($) {
 
     /* Autodetect API Connection Handler */
-    $('#oasso_connection_autodetect').click(function() {
-        var url = new URL(window.location + "");
-        var user_token = url.searchParams.get("user_token");
+    $('#oneallsso_connection_autodetect').click(function() {
+        var url = new URL(window.location + "");   
         var data = {
-            'route' : 'extension/module/oneallsso',
-            'do' : 'autodetect_api_connection',
-            'user_token': user_token,
+            'route': 'extension/module/oneallsso',
+            'do': 'autodetect_api_connection',
+            'user_token': url.searchParams.get("user_token")
         };
 
         jQuery.get('index.php', data, function(responseJson) {
-
             var response = JSON.parse(responseJson);
 
-            $('#oasso_handler option[selected]').attr('selected', false);
-            $('#oasso_handler option[value="' + response.handler + '"]').attr('selected', true);
+            $('#oneallsso_api_handler').val(response.handler).change();
+            $('#oneallsso_api_port').val (response.port).change();
 
-            $('#oasso_port option[selected]').attr('selected', false);
-            $('#oasso_port option[value="' + response.port + '"]').attr('selected', true);
-
-            var message_container = jQuery('#oasso_connection_autodetect_result');
+            var message_container = jQuery('#oneallsso_connection_autodetect_result');
             message_container.html(response.status_message);
             message_container.addClass("alert");
 
@@ -36,29 +31,22 @@ jQuery(document).ready(function($) {
     });
 
     /* Test API Settings */
-    $('#oasso_connection_verify').click(function() {
-        var oasso_handler = jQuery("#oasso_handler").val();
-        var oasso_port = jQuery("#oasso_port").val();
-        var oasso_api_subdomain = jQuery("#oasso_api_subdomain").val();
-        var oasso_public_key = jQuery("#oasso_public_key").val();
-        var oasso_private_key = jQuery("#oasso_private_key").val();
-        var url = new URL(window.location + "");
-
-        var user_token = url.searchParams.get("user_token");
+    $('#oneallsso_connection_verify').click(function() {
+        var url = new URL(window.location + "");        
         var data = {
             'route' : 'extension/module/oneallsso',
-            'user_token' : user_token,
             'do' : 'verify_api_settings',
-            'oneall_api_handler' : oasso_handler,
-            'oneall_api_port' : oasso_port,
-            'oneall_subdomain' : oasso_api_subdomain,
-            'oneall_public' : oasso_public_key,
-            'oneall_private' : oasso_private_key
+            'user_token' :  url.searchParams.get("user_token"),           
+            'oneallsso_api_handler' : jQuery("#oneallsso_api_handler").val(),
+            'oneallsso_api_port' : jQuery("#oneallsso_api_port").val(),
+            'oneallsso_api_subdomain' : jQuery("#oneallsso_api_subdomain").val(),
+            'oneallsso_api_public_key' : jQuery("#oneallsso_api_public_key").val(),
+            'oneallsso_api_private_key' :  jQuery("#oneallsso_api_private_key").val()
         };
 
         jQuery.get('index.php', data, function(responseJson) {
             var response = JSON.parse(responseJson);
-            var message_container = jQuery('#oasso_connection_verify_result');
+            var message_container = jQuery('#oneallsso_connection_verify_result');
 
             message_container.html(response.status_message);
             message_container.addClass("alert");

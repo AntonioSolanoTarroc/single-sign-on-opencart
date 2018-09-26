@@ -134,9 +134,7 @@ class ApiFacade
         // logging errors
         if ($response->getStatusCode() > 201)
         {
-            $message = 'Unable to create distant user "%s" : [%s] %s';
-            $this->log->write(sprintf($message, $email, $response->getStatusCode(), $response->getReasonPhrase()));
-
+             $this->log->write(sprintf('Unable to create distant user "%s" : [%s] %s', $email, $response->getStatusCode(), $response->getReasonPhrase()));
             return null;
         }
 
@@ -156,7 +154,6 @@ class ApiFacade
     protected function updateUser($userToken, array $identityData, $externalId = null, $login = null, $password = null)
     {
         $response = $this->api->updateUser($userToken, $externalId, $login, $password, $identityData);
-
         return json_decode($response->getBody());
     }
 
